@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.java.jsf.provider.model">
+  <class name="Appointment" table="Appointment">
+
+    <id name="appointmentId" column="appointment_id" type="string">
+      <generator class="assigned"/>
+    </id>
+
+    <many-to-one name="doctor" class="com.java.jsf.provider.model.Doctors" column="doctor_id"/>
+    <many-to-one name="recipient" class="com.java.jsf.recepient.model.Recipient" column="h_id"/>
+    <many-to-one name="availability" class="com.java.jsf.provider.model.DoctorAvailability" column="availability_id"/>
+    <many-to-one name="provider" class="com.java.jsf.provider.model.Providers" column="provider_id"/>
+
+    <property name="requestedAt" column="requested_at" type="timestamp"/>
+    <property name="bookedAt" column="booked_at" type="timestamp"/>
+
+    <property name="status">
+      <column name="status"/>
+      <type name="org.hibernate.type.EnumType">
+        <param name="enumClass">com.java.jsf.provider.model.AppointmentStatus</param>
+        <param name="type">12</param>
+      </type>
+    </property>
+
+    <property name="notes" type="text"/>
+
+  </class>
+</hibernate-mapping>

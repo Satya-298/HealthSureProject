@@ -1,0 +1,69 @@
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.java.jsf.provider.model">
+  <class name="DoctorAvailability" table="Doctor_availability">
+
+    <id name="availabilityId" column="availability_id" type="string">
+      <generator class="assigned"/>
+    </id>
+
+    <!-- Many-to-One to Doctors -->
+    <many-to-one name="doctor" class="com.java.jsf.provider.model.Doctors" column="doctor_id" not-null="true"/>
+
+    <property name="availableDate" column="available_date" type="date"/>
+    <property name="startTime" column="start_time" type="time"/>
+    <property name="endTime" column="end_time" type="time"/>
+
+    <property name="slotType">
+      <column name="slot_type"/>
+      <type name="org.hibernate.type.EnumType">
+        <param name="enumClass">com.java.jsf.provider.model.SlotType</param>
+        <param name="type">12</param>
+      </type>
+    </property>
+
+    <!-- Boolean field -->
+    <property name="recurring" column="is_recurring" type="boolean"/>
+
+    <property name="notes"/>
+    <property name="totalSlots" column="total_slots"/>
+    <property name="createdAt" column="created_at" type="timestamp" insert="false" update="false"/>
+    <property name="updatedAt" column="updated_at" type="timestamp" insert="false" update="false"/>
+    
+    <!-- One-to-Many with Appointments -->
+    <set name="appointments" cascade="all" inverse="true" lazy="true">
+      <key column="availability_id"/>
+      <one-to-many class="com.java.jsf.provider.model.Appointment"/>
+    </set>
+    
+    
+
+  </class>
+  
+  <query name="AvailabilityByDoctor">
+  
+  FROM DoctorAvailability da WHERE da.doctor.doctorId = :doctorId
+  	
+  </query>
+  
+  <query name="AvailabilityId">
+  
+  SELECT MAX(a.availabilityId) FROM DoctorAvailability a
+  
+  </query>
+  
+  <query name="AvailabilityDate">
+  
+  from DoctorAvailability where availableDate = :selectedDate
+  
+  </query>
+  
+  <query name="DoctorAvailabilityfindById">
+  
+        from DoctorAvailability where availabilityId = :availabilityId
+
+  </query>
+  
+</hibernate-mapping>

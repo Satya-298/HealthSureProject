@@ -1,0 +1,52 @@
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.java.jsf.provider.model">
+  <class name="Doctors" table="Doctors">
+  
+    <id name="doctorId" column="doctor_id" type="string">
+      <generator class="assigned"/>
+    </id>
+
+    <many-to-one name="provider" class="Providers" column="provider_id" not-null="true" lazy="proxy"/>
+    
+    <property name="doctorName" column="doctor_name"/>
+    <property name="qualification"/>
+    <property name="specialization"/>
+    <property name="licenseNo" column="license_no"/>
+    <property name="email"/>
+    <property name="address"/>
+
+    <property name="gender">
+      <column name="gender"/>
+      <type name="org.hibernate.type.EnumType">
+        <param name="enumClass">com.java.jsf.provider.model.Gender</param>
+        <param name="type">12</param>
+      </type>
+    </property>
+
+
+    <property name="type">
+      <column name="type"/>
+      <type name="org.hibernate.type.EnumType">
+        <param name="enumClass">com.java.jsf.provider.model.DoctorType</param>
+        <param name="type">12</param>
+      </type>
+    </property>
+
+    <property name="doctorStatus">
+      <column name="doctor_status"/>
+      <type name="org.hibernate.type.EnumType">
+        <param name="enumClass">com.java.jsf.provider.model.DoctorStatus</param>
+        <param name="type">12</param>
+      </type>
+    </property>
+
+    <!-- One-to-Many: Doctors to DoctorAvailability -->
+    <set name="availabilities" cascade="all" inverse="true" lazy="true">
+      <key column="doctor_id"/>
+      <one-to-many class="com.java.jsf.provider.model.DoctorAvailability"/>
+    </set>
+
+  </class>
+</hibernate-mapping>
