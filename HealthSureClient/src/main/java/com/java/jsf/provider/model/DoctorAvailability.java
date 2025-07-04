@@ -1,9 +1,11 @@
 package com.java.jsf.provider.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
-public class DoctorAvailability {
+public class DoctorAvailability implements Serializable {
+	
     private String availabilityId;
     private Doctors doctor;
     private Date availableDate;

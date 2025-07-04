@@ -28,9 +28,9 @@
     <h:outputLabel for="date" value="Select Date:" />
     <h:inputText id="date" value="#{availabilityController.selectedDate}">
         <f:convertDateTime pattern="yyyy-MM-dd" />
-    </h:inputText>
+    </h:inputText> &nbsp;&nbsp;&nbsp;&nbsp;
 
-    <h:commandButton value="Search" action="#{availabilityController.fetchAvailabilityByDate}" />
+    <h:commandButton value="Search" action="#{availabilityController.fetchAvailabilityByDate}" /> 
     <br/><br/>
     
 	<h:dataTable value="#{availabilityController.availabilityByDateList}" var="avail"

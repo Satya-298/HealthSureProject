@@ -1,10 +1,12 @@
 package com.java.jsf.provider.model;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
-import com.java.jsf.recepient.model.Recipient;
+import com.java.jsf.recipient.model.Recipient;
 
-public class Appointment {
+public class Appointment implements Serializable {
 
     private String appointmentId;
     private Doctors doctor;
@@ -17,6 +19,9 @@ public class Appointment {
     private Date completedAt;
     private AppointmentStatus status;
     private String notes;
+    
+    private Set<MedicalProcedure> medicalProcedure;
+
     
 	public String getAppointmentId() {
 		return appointmentId;
@@ -85,8 +90,16 @@ public class Appointment {
 		this.notes = notes;
 	}
 	
+	public Set<MedicalProcedure> getMedicalProcedure() {
+		return medicalProcedure;
+	}
+	public void setMedicalProcedure(Set<MedicalProcedure> medicalProcedure) {
+		this.medicalProcedure = medicalProcedure;
+	}
+	
 	public Appointment(String appointmentId, Doctors doctor, Recipient recipient, DoctorAvailability availability,
-			Providers provider, Date requestedAt, Date bookedAt, AppointmentStatus status, String notes) {
+			Providers provider, Date requestedAt, Date bookedAt, Date cancelledAt, Date completedAt,
+			AppointmentStatus status, String notes, Set<MedicalProcedure> medicalProcedure) {
 		this.appointmentId = appointmentId;
 		this.doctor = doctor;
 		this.recipient = recipient;
@@ -94,8 +107,11 @@ public class Appointment {
 		this.provider = provider;
 		this.requestedAt = requestedAt;
 		this.bookedAt = bookedAt;
+		this.cancelledAt = cancelledAt;
+		this.completedAt = completedAt;
 		this.status = status;
 		this.notes = notes;
+		this.medicalProcedure = medicalProcedure;
 	}
 	
 	public Appointment() {

@@ -1,9 +1,10 @@
 package com.java.jsf.provider.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
-public class Providers {
+public class Providers implements Serializable {
     private String providerId;
     private String providerName;
     private String hospitalName;
@@ -13,10 +14,12 @@ public class Providers {
     private String city;
     private String state;
     private String zipCode;
-    private ProviderStatus status;
+    private LoginStatus status;
     private Date createdAt;
 
     private Set<Doctors> doctors;
+    private Set<MedicalProcedure> medicalProcedure;
+
 
 	public String getProviderId() {
 		return providerId;
@@ -105,12 +108,12 @@ public class Providers {
 	}
 
 
-	public ProviderStatus getStatus() {
+	public LoginStatus getStatus() {
 		return status;
 	}
 
 
-	public void setStatus(ProviderStatus status) {
+	public void setStatus(LoginStatus status) {
 		this.status = status;
 	}
 
@@ -134,9 +137,17 @@ public class Providers {
 		this.doctors = doctors;
 	}
 	
+	public Set<MedicalProcedure> getMedicalProcedure() {
+		return medicalProcedure;
+	}
+
+	public void setMedicalProcedure(Set<MedicalProcedure> medicalProcedure) {
+		this.medicalProcedure = medicalProcedure;
+	}
+
 	public Providers(String providerId, String providerName, String hospitalName, String email, String password,
-			String address, String city, String state, String zipCode, ProviderStatus status, Date createdAt,
-			Set<Doctors> doctors) {
+			String address, String city, String state, String zipCode, LoginStatus status, Date createdAt,
+			Set<Doctors> doctors, Set<MedicalProcedure> medicalProcedure) {
 		this.providerId = providerId;
 		this.providerName = providerName;
 		this.hospitalName = hospitalName;
@@ -149,8 +160,8 @@ public class Providers {
 		this.status = status;
 		this.createdAt = createdAt;
 		this.doctors = doctors;
+		this.medicalProcedure = medicalProcedure;
 	}
-
 
 	public Providers() {
 		super();

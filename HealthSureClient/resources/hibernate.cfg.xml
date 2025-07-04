@@ -26,8 +26,10 @@
     	<mapping resource="com/java/jsf/provider/mapping/Providers.hbm.xml"/>
     	<mapping resource="com/java/jsf/provider/mapping/Doctors.hbm.xml"/>
     	<mapping resource="com/java/jsf/provider/mapping/DoctorAvailability.hbm.xml"/>
-    	<mapping resource="com/java/jsf/recepient/mapping/Recipient.hbm.xml"/>
+    	<mapping resource="com/java/jsf/recipient/mapping/Recipient.hbm.xml"/>
     	<mapping resource="com/java/jsf/provider/mapping/Appointment.hbm.xml"/>
+    	<mapping resource="com/java/jsf/provider/mapping/MedicalProcedure.hbm.xml"/>
+    	
     	
     </session-factory>
 </hibernate-configuration>

@@ -5,35 +5,86 @@
               version="2.0" metadata-complete="false">
     <!-- This file must be present with our jar, even if it is empty.  Otherwise, our Java annotations won't get scanned! -->
     
+<!-- For Doctor Availability -->    
+    
+<!-- DAO Bean -->
 <managed-bean>
     <managed-bean-name>availabilityDao</managed-bean-name>
     <managed-bean-class>com.java.jsf.provider.daoImpl.DoctorAvailabilityDaoImpl</managed-bean-class>
     <managed-bean-scope>session</managed-bean-scope>
 </managed-bean>
 
+<!-- Model Bean -->
 <managed-bean>
     <managed-bean-name>availability</managed-bean-name>
     <managed-bean-class>com.java.jsf.provider.model.DoctorAvailability</managed-bean-class>
     <managed-bean-scope>session</managed-bean-scope>
 </managed-bean>
 
+<!-- Controller Bean -->
 <managed-bean>
     <managed-bean-name>availabilityController</managed-bean-name>
     <managed-bean-class>com.java.jsf.provider.controller.DoctorAvailabilityController</managed-bean-class>
     <managed-bean-scope>session</managed-bean-scope>
-    
+
+    <!-- Inject DAO -->
     <managed-property>
         <property-name>availabilityDao</property-name>
         <property-class>com.java.jsf.provider.daoImpl.DoctorAvailabilityDaoImpl</property-class>
         <value>#{availabilityDao}</value>
     </managed-property>
-    
+
+    <!-- Inject Model (if required) -->
     <managed-property>
         <property-name>availability</property-name>
         <property-class>com.java.jsf.provider.model.DoctorAvailability</property-class>
         <value>#{availability}</value>
     </managed-property>
+
 </managed-bean>
+
+
+
+
+
+<!-- For Medical Procedure -->
+
+<!-- DAO Bean -->
+<managed-bean>
+    <managed-bean-name>medicalProcedureDao</managed-bean-name>
+    <managed-bean-class>com.java.jsf.provider.daoImpl.MedicalProcedureDaoImpl</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+</managed-bean>
+
+<!-- Model Bean -->
+<managed-bean>
+    <managed-bean-name>medicalProcedure</managed-bean-name>
+    <managed-bean-class>com.java.jsf.provider.model.MedicalProcedure</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+</managed-bean>
+
+<!-- Controller Bean -->
+<managed-bean>
+    <managed-bean-name>medicalProcedureController</managed-bean-name>
+    <managed-bean-class>com.java.jsf.provider.controller.MedicalProcedureController</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+
+    <!-- Inject DAO -->
+    <managed-property>
+        <property-name>medicalProcedureDao</property-name>
+        <property-class>com.java.jsf.provider.daoImpl.MedicalProcedureDaoImpl</property-class>
+        <value>#{medicalProcedureDao}</value>
+    </managed-property>
+
+    <!-- Inject Model -->
+    <managed-property>
+        <property-name>medicalProcedure</property-name>
+        <property-class>com.java.jsf.provider.model.MedicalProcedure</property-class>
+        <value>#{medicalProcedure}</value>
+    </managed-property>
+
+</managed-bean>
+
 
 <!-- 
     EJB Model Bean

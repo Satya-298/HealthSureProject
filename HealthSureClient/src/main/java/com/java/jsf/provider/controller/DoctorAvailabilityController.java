@@ -18,6 +18,9 @@ public class DoctorAvailabilityController {
     private List<DoctorAvailability> availabilityByDateList;
 
     private DoctorAvailability selectedAvailability;
+    
+    private DoctorAvailability backupAvailability;
+
 
     // Constructor to initialize nested Doctor object
     public DoctorAvailabilityController() {
@@ -39,6 +42,9 @@ public class DoctorAvailabilityController {
 
         // Save using DAO
         message = availabilityDao.addAvailability(availability);
+        availability = new DoctorAvailability(); 
+        doctorId = null;                         
+        message = null; 
         return "availabilitySuccess"; // Or a navigation string
     }
     
@@ -63,6 +69,7 @@ public class DoctorAvailabilityController {
     
     public String updateAvailability() {
         message = availabilityDao.updateAvailability(selectedAvailability);
+        message = null;
         return "listAvailabilityByDate";  
     }
     
@@ -89,11 +96,53 @@ public class DoctorAvailabilityController {
 	public DoctorAvailability getSelectedAvailability() {
         return selectedAvailability;
     }
+	
+	public String resetForm() {
+        this.doctorId = null;
+        this.selectedDate = null;
+        this.message = null;
+        this.availability = new DoctorAvailability();
+        this.availability.setDoctor(new Doctors());
+        this.availabilityList = null;
+        this.availabilityByDateList = null;
+        this.selectedAvailability = null;
+
+        return "addAvailability"; // Replace with your actual page name (without .jsp)
+    }
 
     public void setSelectedAvailability(DoctorAvailability selectedAvailability) {
         this.selectedAvailability = selectedAvailability;
+        
+        if (selectedAvailability != null) {
+            this.backupAvailability = new DoctorAvailability();
+            backupAvailability.setAvailabilityId(selectedAvailability.getAvailabilityId());
+            backupAvailability.setAvailableDate(selectedAvailability.getAvailableDate());
+            backupAvailability.setStartTime(selectedAvailability.getStartTime());
+            backupAvailability.setEndTime(selectedAvailability.getEndTime());
+            backupAvailability.setSlotType(selectedAvailability.getSlotType());
+            backupAvailability.setRecurring(selectedAvailability.isRecurring());
+            backupAvailability.setTotalSlots(selectedAvailability.getTotalSlots());
+            backupAvailability.setNotes(selectedAvailability.getNotes());
+            backupAvailability.setDoctor(selectedAvailability.getDoctor());
+        }
     }
+    
+    public String resetUpdateForm() {
+        if (backupAvailability != null && selectedAvailability != null) {
+            // Restore values from backup
+            selectedAvailability.setAvailableDate(backupAvailability.getAvailableDate());
+            selectedAvailability.setStartTime(backupAvailability.getStartTime());
+            selectedAvailability.setEndTime(backupAvailability.getEndTime());
+            selectedAvailability.setSlotType(backupAvailability.getSlotType());
+            selectedAvailability.setRecurring(backupAvailability.isRecurring());
+            selectedAvailability.setTotalSlots(backupAvailability.getTotalSlots());
+            selectedAvailability.setNotes(backupAvailability.getNotes());
+            selectedAvailability.setDoctor(backupAvailability.getDoctor());
+        }
 
+        message = null; // clear messages
+        return null; // stay on same page
+    }
 
 	// Getters and setters
 	

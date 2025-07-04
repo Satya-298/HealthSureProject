@@ -29,8 +29,8 @@
 
     <!-- Doctor ID Input -->
     <h:outputLabel for="doctorId" value="Doctor ID:" />
-    <h:inputText id="doctorId" value="#{availabilityController.doctorId}" />
-    <h:commandButton value="Search" action="#{availabilityController.fetchAvailability}" />
+    <h:inputText id="doctorId" value="#{availabilityController.doctorId}" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <h:commandButton value="Search" action="#{availabilityController.fetchAvailability}" /> 
     <br/><br/>
 
     <!-- Render table only if list is not empty -->

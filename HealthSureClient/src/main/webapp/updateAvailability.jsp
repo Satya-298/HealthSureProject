@@ -52,7 +52,9 @@
     </h:panelGrid>
 
     <br/>
-    <h:commandButton value="Update" action="#{availabilityController.updateAvailability}" />
+    
+    <h:commandButton value="Update" action="#{availabilityController.updateAvailability}" /> &nbsp;&nbsp;&nbsp;&nbsp;
+	<h:commandButton value="Discard" action="#{availabilityController.resetUpdateForm}" />
     <br/><br/>
 
     <h:outputText value="#{availabilityController.message}" style="color:green;" />

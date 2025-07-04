@@ -31,7 +31,7 @@ public class DoctorAvailabilityDaoImpl implements DoctorAvailabilityDao {
         tx.commit();
         session.close();
 
-        return "Doctor Availability added";
+        return "";
     }
 
     @Override
@@ -89,7 +89,7 @@ public class DoctorAvailabilityDaoImpl implements DoctorAvailabilityDao {
 	    session.close();
 		System.out.println("executed update method");
 
-	    return "Doctor Availability Updated Successfully!";
+	    return "";
 	}
 
 }

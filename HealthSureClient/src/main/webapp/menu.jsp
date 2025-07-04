@@ -15,6 +15,8 @@
             <h:commandLink value="Add Doctor Availability" action="addAvailability" />
             <h:commandLink value="Search Availability by Doctor" action="searchAvailabilityByDoctorId" />
             <h:commandLink value="List Availability by Date" action="listAvailabilityByDate" />
+            <h:commandLink value="search Patient Medical History" action="medicalProcedureSearch" />
+            
         </h:panelGrid>
     </h:form>
 </f:view>

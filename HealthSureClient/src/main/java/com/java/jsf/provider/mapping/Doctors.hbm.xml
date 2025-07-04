@@ -47,6 +47,12 @@
       <key column="doctor_id"/>
       <one-to-many class="com.java.jsf.provider.model.DoctorAvailability"/>
     </set>
+    
+    <set name="medicalProcedure" cascade="all" inverse="true" lazy="true">
+  		<key column="doctor_id"/>
+  		<one-to-many class="com.java.jsf.provider.model.MedicalProcedure"/>
+	</set>
+
 
   </class>
 </hibernate-mapping>
