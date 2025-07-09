@@ -6,6 +6,15 @@ import com.java.jsf.provider.model.MedicalProcedure;
 
 public interface MedicalProcedureDao {
 	
-	 List<MedicalProcedure> searchMedicalProcedure(String hidOrNameOrPhone);
+	 List<MedicalProcedure> searchByHid(String hid);
+
+	 List<MedicalProcedure> searchByName(String namePart);
+
+	 List<MedicalProcedure> searchByMobile(String mobile);
+	 
+	 List<MedicalProcedure> searchByNameStartsWith(String prefix);
+
+	 List<MedicalProcedure> searchByNameContains(String substring);
+
 
 }

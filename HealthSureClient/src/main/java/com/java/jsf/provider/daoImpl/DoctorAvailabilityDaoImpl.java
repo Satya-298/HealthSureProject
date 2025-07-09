@@ -10,6 +10,7 @@ import org.hibernate.Transaction;
 
 import com.java.jsf.provider.dao.DoctorAvailabilityDao;
 import com.java.jsf.provider.model.DoctorAvailability;
+import com.java.jsf.provider.model.Doctors;
 import com.java.jsf.util.SessionHelper;
 
 public class DoctorAvailabilityDaoImpl implements DoctorAvailabilityDao {
@@ -22,11 +23,6 @@ public class DoctorAvailabilityDaoImpl implements DoctorAvailabilityDao {
         sf = SessionHelper.getSessionFactory();
         session = sf.openSession();
         Transaction tx = session.beginTransaction();
-
-        // Generate unique availability ID
-        String newId = generateAvailabilityId();
-        availability.setAvailabilityId(newId);
-
         session.save(availability);
         tx.commit();
         session.close();
@@ -36,6 +32,9 @@ public class DoctorAvailabilityDaoImpl implements DoctorAvailabilityDao {
 
     @Override
     public List<DoctorAvailability> getAvailabilityByDoctor(String doctorId) {
+        if (doctorId == null || doctorId.trim().isEmpty()) 
+        	return null;
+
         sf = SessionHelper.getSessionFactory();
         session = sf.openSession();
         Query query = session.getNamedQuery("AvailabilityByDoctor");
@@ -45,7 +44,7 @@ public class DoctorAvailabilityDaoImpl implements DoctorAvailabilityDao {
         return list;
     }
 
-    // Helper method to generate unique availability ID
+    @Override
     public String generateAvailabilityId() {
     	Session session = null;
         try {
@@ -92,6 +91,14 @@ public class DoctorAvailabilityDaoImpl implements DoctorAvailabilityDao {
 	    return "";
 	}
 
+	@Override
+    public Doctors getDoctorById(String doctorId) {
+        sf = SessionHelper.getSessionFactory();
+        session = sf.openSession();
+        Doctors doctor = (Doctors) session.get(Doctors.class, doctorId);
+        session.close();
+        return doctor;
+    }
 }
 
 
