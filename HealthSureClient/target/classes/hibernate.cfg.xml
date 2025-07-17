@@ -30,6 +30,10 @@
     	<mapping resource="com/java/jsf/provider/mapping/Appointment.hbm.xml"/>
     	<mapping resource="com/java/jsf/provider/mapping/MedicalProcedure.hbm.xml"/>
     	
+    	<mapping resource="com/java/jsf/provider/mapping/Prescription.hbm.xml"/>
+    	<mapping resource="com/java/jsf/provider/mapping/PrescribedMedicines.hbm.xml"/>
+    	<mapping resource="com/java/jsf/provider/mapping/ProcedureTest.hbm.xml"/>
+    	<mapping resource="com/java/jsf/provider/mapping/ProcedureDailyLog.hbm.xml"/>
     	
     </session-factory>
 </hibernate-configuration>

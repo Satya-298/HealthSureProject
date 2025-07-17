@@ -19,6 +19,8 @@ public class Providers implements Serializable {
 
     private Set<Doctors> doctors;
     private Set<MedicalProcedure> medicalProcedure;
+    private Set<Prescription> prescriptions;
+
 
 
 	public String getProviderId() {
@@ -144,10 +146,20 @@ public class Providers implements Serializable {
 	public void setMedicalProcedure(Set<MedicalProcedure> medicalProcedure) {
 		this.medicalProcedure = medicalProcedure;
 	}
+	
+	public Set<Prescription> getPrescriptions() {
+		return prescriptions;
+	}
+
+
+	public void setPrescriptions(Set<Prescription> prescriptions) {
+		this.prescriptions = prescriptions;
+	}
 
 	public Providers(String providerId, String providerName, String hospitalName, String email, String password,
 			String address, String city, String state, String zipCode, LoginStatus status, Date createdAt,
-			Set<Doctors> doctors, Set<MedicalProcedure> medicalProcedure) {
+			Set<Doctors> doctors, Set<MedicalProcedure> medicalProcedure, Set<Prescription> prescriptions) {
+		super();
 		this.providerId = providerId;
 		this.providerName = providerName;
 		this.hospitalName = hospitalName;
@@ -161,6 +173,7 @@ public class Providers implements Serializable {
 		this.createdAt = createdAt;
 		this.doctors = doctors;
 		this.medicalProcedure = medicalProcedure;
+		this.prescriptions = prescriptions;
 	}
 
 	public Providers() {

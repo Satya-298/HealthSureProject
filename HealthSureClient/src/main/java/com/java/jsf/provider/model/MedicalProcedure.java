@@ -1,110 +1,190 @@
 package com.java.jsf.provider.model;
-
+ 
 import java.io.Serializable;
 import java.util.Date;
-
+import java.util.Set;
+ 
 import com.java.jsf.recipient.model.Recipient;
-
+ 
 public class MedicalProcedure implements Serializable {
-	
-	private String procedureId;
-    private Appointment appointment; 
+ 
+    private String procedureId;
+    private Appointment appointment;
     private Recipient recipient;
     private Providers provider;
     private Doctors doctor;
-    private Date procedureDate;
+ 
+    private Date scheduledDate;      // NEW: for procedures planned ahead
+    private Date procedureDate;      // actual date
+    private Date fromDate;           // long-term start
+    private Date toDate;             // long-term end
+ 
     private String diagnosis;
     private String recommendations;
-    private Date fromDate;
-    private Date toDate;
+ 
+    private ProcedureStatus procedureStatus;  // NEW: 'scheduled', 'in_progress', 'completed', 'cancelled'
     private Date createdAt;
+    private ProcedureType type;
     
-	public String getProcedureId() {
-		return procedureId;
+    private Set<Prescription> prescription;
+    private Set<ProcedureDailyLog> logs;
+    
+    public ProcedureType getType() {
+		return type;
 	}
-	public void setProcedureId(String procedureId) {
-		this.procedureId = procedureId;
+ 
+	public void setType(ProcedureType type) {
+		this.type = type;
 	}
-	public Appointment getAppointment() {
-		return appointment;
+ 
+    public Set<ProcedureDailyLog> getLogs() {
+		return logs;
 	}
-	public void setAppointment(Appointment appointment) {
-		this.appointment = appointment;
+ 
+	public void setLogs(Set<ProcedureDailyLog> logs) {
+		this.logs = logs;
 	}
-	public Recipient getRecipient() {
-		return recipient;
-	}
-	public void setRecipient(Recipient recipient) {
-		this.recipient = recipient;
-	}
-	public Providers getProvider() {
+ 
+    public MedicalProcedure() {
+        this.appointment = new Appointment();
+        this.recipient = new Recipient();
+        this.provider = new Providers();
+        this.doctor = new Doctors();
+    }
+ 
+    // Getters and Setters
+    public String getProcedureId() {
+        return procedureId;
+    }
+ 
+    public void setProcedureId(String procedureId) {
+        this.procedureId = procedureId;
+    }
+ 
+    public Appointment getAppointment() {
+        return appointment;
+    }
+ 
+    public void setAppointment(Appointment appointment) {
+        this.appointment = appointment;
+    }
+ 
+    public Recipient getRecipient() {
+        return recipient;
+    }
+ 
+    public void setRecipient(Recipient recipient) {
+        this.recipient = recipient;
+    }
+ 
+    public Providers getProvider() {
 		return provider;
 	}
+
 	public void setProvider(Providers provider) {
 		this.provider = provider;
 	}
+
 	public Doctors getDoctor() {
 		return doctor;
 	}
+
 	public void setDoctor(Doctors doctor) {
 		this.doctor = doctor;
 	}
-	public Date getProcedureDate() {
-		return procedureDate;
+
+	public Date getScheduledDate() {
+        return scheduledDate;
+    }
+ 
+    public void setScheduledDate(Date scheduledDate) {
+        this.scheduledDate = scheduledDate;
+    }
+ 
+    public Date getProcedureDate() {
+        return procedureDate;
+    }
+ 
+    public void setProcedureDate(Date procedureDate) {
+        this.procedureDate = procedureDate;
+    }
+ 
+    public Date getFromDate() {
+        return fromDate;
+    }
+ 
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+ 
+    public Date getToDate() {
+        return toDate;
+    }
+ 
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+ 
+    public String getDiagnosis() {
+        return diagnosis;
+    }
+ 
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis = diagnosis;
+    }
+ 
+    public String getRecommendations() {
+        return recommendations;
+    }
+ 
+    public void setRecommendations(String recommendations) {
+        this.recommendations = recommendations;
+    }
+ 
+    public ProcedureStatus getProcedureStatus() {
+		return procedureStatus;
 	}
-	public void setProcedureDate(Date procedureDate) {
-		this.procedureDate = procedureDate;
+ 
+	public void setProcedureStatus(ProcedureStatus procedureStatus) {
+		this.procedureStatus = procedureStatus;
 	}
-	public String getDiagnosis() {
-		return diagnosis;
-	}
-	public void setDiagnosis(String diagnosis) {
-		this.diagnosis = diagnosis;
-	}
-	public String getRecommendations() {
-		return recommendations;
-	}
-	public void setRecommendations(String recommendations) {
-		this.recommendations = recommendations;
-	}
-	public Date getFromDate() {
-		return fromDate;
-	}
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-	public Date getToDate() {
-		return toDate;
-	}
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+ 
 	public Date getCreatedAt() {
-		return createdAt;
+        return createdAt;
+    }
+ 
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+ 
+    public Set<Prescription> getPrescription() {
+		return prescription;
 	}
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
+
+	public void setPrescription(Set<Prescription> prescription) {
+		this.prescription = prescription;
 	}
-	
-	public MedicalProcedure(String procedureId, Appointment appointment, Recipient recipient, Providers provider,
-			Doctors doctor, Date procedureDate, String diagnosis, String recommendations, Date fromDate, Date toDate,
-			Date createdAt) {
-		this.procedureId = procedureId;
-		this.appointment = appointment;
-		this.recipient = recipient;
-		this.provider = provider;
-		this.doctor = doctor;
-		this.procedureDate = procedureDate;
-		this.diagnosis = diagnosis;
-		this.recommendations = recommendations;
-		this.fromDate = fromDate;
-		this.toDate = toDate;
-		this.createdAt = createdAt;
-	}
-	
-	public MedicalProcedure() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-    
+
+	@Override
+    public String toString() {
+        return "MedicalProcedure [" +
+                "procedureId=" + procedureId +
+                ", appointmentId=" + (appointment != null ? appointment.getAppointmentId() : null) +
+                ", recipientId=" + (recipient != null ? recipient.gethId() : null) +
+                ", providerId=" + (provider != null ? provider.getProviderId() : null) +
+                ", doctorId=" + (doctor != null ? doctor.getDoctorId() : null) +
+                ", scheduledDate=" + scheduledDate +
+                ", procedureDate=" + procedureDate +
+                ", fromDate=" + fromDate +
+                ", toDate=" + toDate +
+                ", diagnosis=" + diagnosis +
+                ", recommendations=" + recommendations +
+                ", procedureStatus=" + procedureStatus +
+                ", createdAt=" + createdAt +
+//                ", claimsCount=" + (claims != null ? claims.size() : 0) +
+                ", prescriptionsCount=" + (prescription != null ? prescription.size() : 0) +
+                ", logsCount=" + (logs != null ? logs.size() : 0) +
+                "]";
+    }
+ 
 }

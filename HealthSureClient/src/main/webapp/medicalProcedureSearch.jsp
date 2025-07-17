@@ -7,62 +7,45 @@
     <style>
         body {
             background-color: #f3f4f6;
-            font-family: Arial, sans-serif;
             min-height: 100vh;
-            padding: 24px;
+            padding: 2rem;
+            font-family: Arial, sans-serif;
         }
 
         .form-container {
             background-color: white;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             max-width: 1200px;
             margin: auto;
-        }
-
-        h2 {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #1d4ed8;
-            margin-bottom: 24px;
-        }
-
-        label, .label {
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 6px;
-            display: block;
-        }
-
-        .flex-row {
-            display: flex;
-            gap: 16px;
-            align-items: flex-end;
-            margin-bottom: 16px;
-        }
-
-        .radio-row {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        input[type="text"], textarea {
-            padding: 8px 12px;
-            border: 1px solid #d1d5db;
+            padding: 2rem;
             border-radius: 8px;
-            width: 260px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h2.title {
+            text-align: center;
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            width: 250px;
         }
 
         .btn {
-            padding: 10px 16px;
+            padding: 10px 20px;
             border: none;
             border-radius: 6px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
         }
 
         .btn-blue {
@@ -71,7 +54,7 @@
         }
 
         .btn-blue:hover {
-            background-color: #1e40af;
+            background-color: #1d4ed8;
         }
 
         .btn-gray {
@@ -83,204 +66,249 @@
             background-color: #4b5563;
         }
 
-        .error {
-            color: red;
-            font-size: 13px;
-            margin-top: 4px;
+        .error-message {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
         }
 
-        .table-wrapper {
-            border: 1px solid #ccc;
-            border-radius: 10px;
+        .table-container {
+            margin-top: 2rem;
             overflow-x: auto;
-            margin-top: 20px;
-            min-height: 400px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
-            word-wrap: break-word;
-            text-align: center;
         }
 
         th, td {
             padding: 10px;
-            border-bottom: 1px solid #ddd;
+            text-align: center;
+            vertical-align: top;
         }
 
         th {
-            background-color: #f9fafb;
-            color: #2563eb;
-            cursor: pointer;
-        }
-
-        th:hover {
-            text-decoration: underline;
+            background-color: #f1f5f9;
+            font-weight: bold;
+            border-bottom: 1px solid #d1d5db;
         }
 
         .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 24px;
-            margin-top: 24px;
-            background-color: white;
-            padding: 12px;
-            position: fixed;
-            bottom: 12px;
-            left: 0;
-            right: 0;
-            box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.08);
+            margin-top: 1.5rem;
+            text-align: center;
         }
 
-        .link {
+        .pagination a {
+            margin: 0 1rem;
             color: #2563eb;
+            font-weight: bold;
             text-decoration: none;
         }
 
-        .link:hover {
-            text-decoration: underline;
+        .searching-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 9999;
         }
 
-        .message {
-            color: red;
-            margin-bottom: 20px;
-            font-size: 14px;
-            display: block;
+        .searching-popup.hidden {
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid #6ee7b7;
+            border-top: 4px solid transparent;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
+
+    <script>
+        function showSearchingBox() {
+            document.getElementById("searchingBox").classList.remove("hidden");
+        }
+
+        function hideSearchingBox() {
+            document.getElementById("searchingBox").classList.add("hidden");
+        }
+
+        window.addEventListener('load', function () {
+            hideSearchingBox();
+        });
+    </script>
 </head>
 <body>
 <f:view>
-<h:form prependId="false" styleClass="form-container">
+    <h:form id="historyForm" styleClass="form-container">
+        <h2 class="title">Search Medical Procedures</h2>
 
-    <a name="top"></a>
+        <!-- Searching Box -->
+        <div id="searchingBox" class="searching-popup hidden">
+            <span>Searching...</span>
+            <div class="spinner"></div>
+        </div>
 
-    <h2>Search Medical Procedures</h2>
+        <!-- Doctor ID -->
+        <div class="input-group">
+            <h:outputLabel for="doctorId" value="Doctor ID:" />
+            <h:inputText id="doctorId" value="#{medicalHistoryController.doctorId}" />
+            <h:message for="doctorId" styleClass="error-message" />
+        </div>
 
-    <div class="label">Select Search Type:</div>
-    <div class="radio-row">
-        <h:selectOneRadio value="#{medicalProcedureController.searchType}" onclick="this.form.submit();">
-            <f:selectItem itemValue="hid" itemLabel="Search by HID" />
-            <f:selectItem itemValue="name" itemLabel="Search by Name" />
-            <f:selectItem itemValue="mobile" itemLabel="Search by Phone" />
-        </h:selectOneRadio>
-    </div>
-
-    <h:panelGroup rendered="#{medicalProcedureController.searchType eq 'name'}">
-        <div class="label">Name Search Mode:</div>
-        <div class="radio-row">
-            <h:selectOneRadio value="#{medicalProcedureController.nameSearchMode}">
-                <f:selectItem itemValue="startsWith" itemLabel="Starts With" />
-                <f:selectItem itemValue="contains" itemLabel="Contains" />
+        <!-- Search Type -->
+        <div class="input-group">
+            <h:outputLabel for="searchType" value="Select Search Type (optional):" />
+            <h:selectOneRadio id="searchType" value="#{medicalHistoryController.searchType}" layout="lineDirection" onclick="this.form.submit();">
+                <f:selectItem itemValue="hid" itemLabel="Search by HID" />
+                <f:selectItem itemValue="name" itemLabel="Search by Name" />
+                <f:selectItem itemValue="mobile" itemLabel="Search by Phone" />
             </h:selectOneRadio>
+            <h:message for="searchType" styleClass="error-message" />
         </div>
-    </h:panelGroup>
 
-    <div class="flex-row">
-        <div>
-            <h:outputLabel for="searchKey" value="Enter Search Value:" styleClass="label" />
-            <h:inputText id="searchKey" value="#{medicalProcedureController.searchKey}" />
+        <!-- Name Search Mode -->
+        <h:panelGroup rendered="#{medicalHistoryController.searchType eq 'name'}">
+            <div class="input-group">
+                <h:outputLabel for="nameSearchMode" value="Name Search Mode:" />
+                <h:selectOneRadio id="nameSearchMode" value="#{medicalHistoryController.nameSearchMode}" layout="lineDirection">
+                    <f:selectItem itemValue="startsWith" itemLabel="Starts With" />
+                    <f:selectItem itemValue="contains" itemLabel="Contains" />
+                </h:selectOneRadio>
+                <h:message for="nameSearchMode" styleClass="error-message" />
+            </div>
+        </h:panelGroup>
+
+        <!-- Search Key -->
+        <div class="input-group">
+            <h:outputLabel for="searchKey" value="Enter Search Value:" />
+            <h:inputText id="searchKey" value="#{medicalHistoryController.searchKey}" />
+            <h:message for="searchKey" styleClass="error-message" />
         </div>
-        <h:commandButton value="Search" action="#{medicalProcedureController.searchProcedures}" styleClass="btn btn-blue" />
-        <h:commandButton value="Reset" action="#{medicalProcedureController.resetForm}" styleClass="btn btn-gray" />
-    </div>
 
-    <h:messages globalOnly="true" styleClass="message" layout="table" />
+        <!-- Buttons -->
+        <div class="input-group" style="margin-top: 1.5rem;">
+            <h:commandButton value="Search" action="#{medicalHistoryController.searchProcedures}" onclick="showSearchingBox()" styleClass="btn btn-blue" />
+            <h:commandButton value="Reset" action="#{medicalHistoryController.resetForm}" styleClass="btn btn-gray" immediate="true" />
+        </div>
 
-    <div class="table-wrapper">
-        <h:dataTable value="#{medicalProcedureController.paginatedList}" var="proc"
-                     border="1" rendered="#{not empty medicalProcedureController.searchResults}">
+        <!-- Global Messages -->
+        <h:messages globalOnly="true" styleClass="error-message" />
 
-            <h:column>
-                <f:facet name="header">
-                    <h:commandLink value="Procedure ID" action="#{medicalProcedureController.sortBy('procedureId')}" />
-                </f:facet>
-                <h:outputText value="#{proc.procedureId}" />
-            </h:column>
+        <!-- Result Table -->
+        <div class="table-container">
+            <h:dataTable value="#{medicalHistoryController.paginatedList}" var="proc" rendered="#{not empty medicalHistoryController.searchResults}">
+                
+                <h:column>
+                    <f:facet name="header">
+                        <h:commandLink action="#{medicalHistoryController.sortBy('procedureId')}">
+                            <h:outputText value="Procedure ID" />
+                        </h:commandLink>
+                    </f:facet>
+                    <h:outputText value="#{proc.procedureId}" />
+                </h:column>
 
-            <h:column>
-                <f:facet name="header">
-                    <h:commandLink value="Recipient" action="#{medicalProcedureController.sortBy('recipientName')}" />
-                </f:facet>
-                <h:outputText value="#{proc.recipient.firstName} #{proc.recipient.lastName}" />
-            </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        <h:commandLink action="#{medicalHistoryController.sortBy('procedureDate')}">
+                            <h:outputText value="Procedure Date" />
+                        </h:commandLink>
+                    </f:facet>
+                    <h:outputText value="#{proc.procedureDate}" />
+                </h:column>
 
-            <h:column>
-                <f:facet name="header">
-                    <h:commandLink value="Doctor" action="#{medicalProcedureController.sortBy('doctorName')}" />
-                </f:facet>
-                <h:outputText value="#{proc.doctor.doctorName}" />
-            </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        <h:commandLink action="#{medicalHistoryController.sortBy('type')}">
+                            <h:outputText value="Type" />
+                        </h:commandLink>
+                    </f:facet>
+                    <h:outputText value="#{proc.type}" />
+                </h:column>
 
-            <h:column>
-                <f:facet name="header">
-                    <h:commandLink value="Provider" action="#{medicalProcedureController.sortBy('providerName')}" />
-                </f:facet>
-                <h:outputText value="#{proc.provider.hospitalName}" />
-            </h:column>
+                <h:column rendered="#{medicalHistoryController.showDurationDates}">
+                    <f:facet name="header">
+                        <h:commandLink action="#{medicalHistoryController.sortBy('fromDate')}">
+                            <h:outputText value="From Date" />
+                        </h:commandLink>
+                    </f:facet>
+                    <h:outputText value="#{proc.fromDate}" />
+                </h:column>
 
-            <h:column>
-                <f:facet name="header">
-                    <h:commandLink value="Procedure Date" action="#{medicalProcedureController.sortBy('procedureDate')}" />
-                </f:facet>
-                <h:outputText value="#{proc.procedureDate}">
-                    <f:convertDateTime pattern="yyyy-MM-dd" />
-                </h:outputText>
-            </h:column>
+                <h:column rendered="#{medicalHistoryController.showDurationDates}">
+                    <f:facet name="header">
+                        <h:commandLink action="#{medicalHistoryController.sortBy('toDate')}">
+                            <h:outputText value="To Date" />
+                        </h:commandLink>
+                    </f:facet>
+                    <h:outputText value="#{proc.toDate}" />
+                </h:column>
 
-            <h:column>
-                <f:facet name="header">
-                    <h:commandLink value="Diagnosis" action="#{medicalProcedureController.sortBy('diagnosis')}" />
-                </f:facet>
-                <h:outputText value="#{proc.diagnosis}" style="white-space: normal;" />
-            </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        <h:commandLink action="#{medicalHistoryController.sortBy('diagnosis')}">
+                            <h:outputText value="Diagnosis" />
+                        </h:commandLink>
+                    </f:facet>
+                    <h:outputText value="#{proc.diagnosis}" />
+                </h:column>
 
-            <h:column>
-                <f:facet name="header">
-                    <h:commandLink value="Recommendation" action="#{medicalProcedureController.sortBy('recommendations')}" />
-                </f:facet>
-                <h:outputText value="#{proc.recommendations}" style="white-space: normal;" />
-            </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        <h:commandLink action="#{medicalHistoryController.sortBy('recommendations')}">
+                            <h:outputText value="Recommendations" />
+                        </h:commandLink>
+                    </f:facet>
+                    <h:outputText value="#{proc.recommendations}" />
+                </h:column>
 
-            <h:column>
-                <f:facet name="header">
-                    <h:commandLink value="From Date" action="#{medicalProcedureController.sortBy('fromDate')}" />
-                </f:facet>
-                <h:outputText value="#{proc.fromDate}">
-                    <f:convertDateTime pattern="yyyy-MM-dd" />
-                </h:outputText>
-            </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        <h:commandLink action="#{medicalHistoryController.sortBy('recipientName')}">
+                            <h:outputText value="Recipient" />
+                        </h:commandLink>
+                    </f:facet>
+                    <h:outputText value="#{proc.recipient.firstName} #{proc.recipient.lastName}" />
+                </h:column>
 
-            <h:column>
-                <f:facet name="header">
-                    <h:commandLink value="To Date" action="#{medicalProcedureController.sortBy('toDate')}" />
-                </f:facet>
-                <h:outputText value="#{proc.toDate}">
-                    <f:convertDateTime pattern="yyyy-MM-dd" />
-                </h:outputText>
-            </h:column>
+            </h:dataTable>
+        </div>
 
-        </h:dataTable>
-    </div>
+        <!-- Pagination -->
+        <div class="pagination">
+            <h:commandLink action="#{medicalHistoryController.previousPage}" rendered="#{!medicalHistoryController.previousButtonDisabled}">
+                <h:outputText value="Previous" />
+            </h:commandLink>
 
-    <div class="pagination">
-        <h:commandLink action="#{medicalProcedureController.previousPage}" styleClass="link">
-            <h:outputText value="Previous" />
-            <f:param name="scroll" value="top" />
-        </h:commandLink>
+            <h:outputText value="Page #{medicalHistoryController.currentPage + 1} of #{medicalHistoryController.totalPages}" />
 
-        <h:outputText value="Page #{medicalProcedureController.currentPage + 1} of #{medicalProcedureController.totalPages}" />
-
-        <h:commandLink action="#{medicalProcedureController.nextPage}" styleClass="link">
-            <h:outputText value="Next" />
-            <f:param name="scroll" value="top" />
-        </h:commandLink>
-    </div>
-
-</h:form>
+            <h:commandLink action="#{medicalHistoryController.nextPage}" rendered="#{!medicalHistoryController.nextButtonDisabled}">
+                <h:outputText value="Next" />
+            </h:commandLink>
+        </div>
+    </h:form>
 </f:view>
 </body>
 </html>

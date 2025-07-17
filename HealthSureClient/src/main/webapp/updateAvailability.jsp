@@ -126,7 +126,9 @@
 
         <!-- Availability ID -->
         <div>
-            <label>Availability ID:</label>
+            <h:outputLabel for="availabilityId">
+                <span style="color:red">*</span>Availability ID:
+            </h:outputLabel>
             <div class="mt-1">
                 <h:outputText value="#{availabilityController.selectedAvailability.availabilityId}" />
             </div>
@@ -134,7 +136,9 @@
 
         <!-- Doctor ID -->
         <div>
-            <label>Doctor ID:</label>
+            <h:outputLabel for="doctorId">
+                <span style="color:red">*</span>Doctor ID:
+            </h:outputLabel>
             <div class="mt-1">
                 <h:outputText value="#{availabilityController.selectedAvailability.doctor.doctorId}" />
             </div>
@@ -142,7 +146,9 @@
 
         <!-- Date -->
         <div>
-            <label for="date">Available Date:</label>
+            <h:outputLabel for="date">
+                <span style="color:red">*</span>Available Date:
+            </h:outputLabel>
             <h:inputText id="date" value="#{availabilityController.selectedAvailability.availableDate}">
                 <f:convertDateTime pattern="yyyy-MM-dd" />
             </h:inputText>
@@ -151,7 +157,9 @@
 
         <!-- Start Time -->
         <div>
-            <label for="startTime">Start Time:</label>
+            <h:outputLabel for="startTime">
+                <span style="color:red">*</span>Start Time (HH:mm):
+                    </h:outputLabel>
             <h:inputText id="startTime" value="#{availabilityController.selectedAvailability.startTime}">
                 <f:convertDateTime pattern="HH:mm" />
             </h:inputText>
@@ -160,8 +168,10 @@
 
         <!-- End Time -->
         <div>
-            <label for="endTime">End Time:</label>
-            <h:inputText id="endTime" value="#{availabilityController.selectedAvailability.endTime}">
+			<h:outputLabel for="endTime">
+                <span style="color:red">*</span>End Time (HH:mm):
+       	    </h:outputLabel>
+       	    <h:inputText id="endTime" value="#{availabilityController.selectedAvailability.endTime}">
                 <f:convertDateTime pattern="HH:mm" />
             </h:inputText>
             <h:message for="endTime" styleClass="error" />
@@ -169,7 +179,9 @@
 
         <!-- Slot Type -->
         <div>
-            <label for="slotType">Slot Type:</label>
+            <h:outputLabel for="slotType">
+                <span style="color:red">*</span>Slot Type:
+            </h:outputLabel>
             <h:selectOneMenu id="slotType" value="#{availabilityController.selectedAvailability.slotType}">
                 <f:selectItem itemValue="STANDARD" itemLabel="Standard" />
                 <f:selectItem itemValue="ADHOC" itemLabel="Adhoc" />
@@ -179,22 +191,28 @@
 
         <!-- Recurring -->
         <div>
-            <label for="recurring">Recurring:</label><br/>
-            <h:selectBooleanCheckbox id="recurring" value="#{availabilityController.selectedAvailability.recurring}" disabled="true" />
+			<h:outputLabel for="recurring">
+            Recurring:
+            <span style="font-size: 0.75rem; color: #6b7280; font-weight: normal;">
+            (Auto-Check/Uncheck as per SlotType)
+            </span>
+           	</h:outputLabel>
+           	<h:selectBooleanCheckbox id="recurring" value="#{availabilityController.selectedAvailability.recurring}" disabled="true" />
         </div>
 
         <!-- Total Slots -->
         <div>
-            <label for="totalSlots">Total Slots:</label>
+			<h:outputLabel for="totalSlots">
+                 <span style="color:red">*</span>Total Slots:
+            </h:outputLabel>
             <h:inputText id="totalSlots" value="#{availabilityController.selectedAvailability.totalSlots}" />
             <h:message for="totalSlots" styleClass="error" />
         </div>
 
         <!-- Notes -->
         <div class="full-span">
-            <label for="notes">Notes:</label>
+            <h:outputLabel for="notes">Notes (Optional):</h:outputLabel>
             <h:inputTextarea id="notes" value="#{availabilityController.selectedAvailability.notes}" rows="3" cols="30" />
-            <h:message for="notes" styleClass="error" />
         </div>
     </div>
 

@@ -4,19 +4,22 @@
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="com.java.jsf.provider.model">
+
   <class name="Appointment" table="Appointment">
 
     <id name="appointmentId" column="appointment_id" type="string">
       <generator class="assigned"/>
     </id>
 
-    <many-to-one name="doctor" class="com.java.jsf.provider.model.Doctors" column="doctor_id"/>
-    <many-to-one name="recipient" class="com.java.jsf.recipient.model.Recipient" column="h_id"/>
-    <many-to-one name="availability" class="com.java.jsf.provider.model.DoctorAvailability" column="availability_id"/>
-    <many-to-one name="provider" class="com.java.jsf.provider.model.Providers" column="provider_id"/>
+    <many-to-one name="doctor" class="com.java.jsf.provider.model.Doctors" column="doctor_id" not-null="true"/>
+    <many-to-one name="recipient" class="com.java.jsf.recipient.model.Recipient" column="h_id" not-null="true"/>
+    <many-to-one name="availability" class="com.java.jsf.provider.model.DoctorAvailability" column="availability_id" not-null="true"/>
+    <many-to-one name="provider" class="com.java.jsf.provider.model.Providers" column="provider_id" not-null="true"/>
 
     <property name="requestedAt" column="requested_at" type="timestamp"/>
     <property name="bookedAt" column="booked_at" type="timestamp"/>
+    <property name="cancelledAt" column="cancelled_at" type="timestamp"/>
+    <property name="completedAt" column="completed_at" type="timestamp"/>
 
     <property name="status">
       <column name="status"/>
@@ -26,13 +29,17 @@
       </type>
     </property>
 
-    <property name="notes" type="text"/>
+    <property name="slotNo" column="slot_no" type="int"/>
+    <property name="start" column="start" type="timestamp"/>
+    <property name="end" column="end" type="timestamp"/>
     
-	<set name="medicalProcedure" cascade="all" inverse="true" lazy="true">
-  		<key column="appointment_id"/>
-  		<one-to-many class="com.java.jsf.provider.model.MedicalProcedure"/>
-	</set>
+    <property name="notes" column="notes" type="text"/>
 
+    <set name="medicalProcedure" cascade="all" inverse="true" lazy="true">
+      <key column="appointment_id"/>
+      <one-to-many class="com.java.jsf.provider.model.MedicalProcedure"/>
+    </set>
 
   </class>
+
 </hibernate-mapping>

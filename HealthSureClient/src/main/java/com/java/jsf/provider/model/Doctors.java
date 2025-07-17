@@ -18,6 +18,9 @@ public class Doctors implements Serializable {
 
     private Set<DoctorAvailability> availabilities;
     private Set<MedicalProcedure> medicalProcedure;
+    private Set<Prescription> prescriptions;
+
+    
 
 	public String getDoctorId() {
 		return doctorId;
@@ -125,10 +128,18 @@ public class Doctors implements Serializable {
 		this.medicalProcedure = medicalProcedure;
 	}
 
+	public Set<Prescription> getPrescriptions() {
+		return prescriptions;
+	}
+
+	public void setPrescriptions(Set<Prescription> prescriptions) {
+		this.prescriptions = prescriptions;
+	}
 
 	public Doctors(String doctorId, Providers provider, String doctorName, String qualification, String specialization,
 			String licenseNo, String email, String address, Gender gender, DoctorType type, DoctorStatus doctorStatus,
-			Set<DoctorAvailability> availabilities, Set<MedicalProcedure> medicalProcedure) {
+			Set<DoctorAvailability> availabilities, Set<MedicalProcedure> medicalProcedure,
+			Set<Prescription> prescriptions) {
 		this.doctorId = doctorId;
 		this.provider = provider;
 		this.doctorName = doctorName;
@@ -142,11 +153,11 @@ public class Doctors implements Serializable {
 		this.doctorStatus = doctorStatus;
 		this.availabilities = availabilities;
 		this.medicalProcedure = medicalProcedure;
+		this.prescriptions = prescriptions;
 	}
 
 	public Doctors() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
     
 }

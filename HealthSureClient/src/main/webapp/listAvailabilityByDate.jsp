@@ -43,10 +43,10 @@
             color: #374151;
         }
 
-        input[type="text"] {
+        input[type="date"], input[type="text"] {
             padding: 8px 12px;
             border: 1px solid #d1d5db;
-            border-radius: 8px;
+            border-radius: 6px;
             width: 240px;
             font-size: 14px;
         }
@@ -93,6 +93,17 @@
             background-color: #4b5563;
         }
 
+        .btn-update {
+            background-color: #22c55e;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .btn-update:hover {
+            background-color: #15803d;
+        }
+
         .table-wrapper {
             display: flex;
             justify-content: center;
@@ -102,18 +113,17 @@
         table {
             width: 100%;
             max-width: 1100px;
-            table-layout: fixed;
             border-collapse: collapse;
-            text-align: center;
             background-color: white;
-            word-wrap: break-word;
+            text-align: center;
         }
 
         th, td {
             padding: 10px;
             border-bottom: 1px solid #ddd;
-            white-space: normal;
-            word-wrap: break-word;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         th {
@@ -157,24 +167,77 @@
             margin-top: 16px;
         }
 
-        .btn-update {
-            background-color: #22c55e;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
+        .searching-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #e6ffed;
+            border: 1px solid #34d399;
+            color: #065f46;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 1000;
         }
 
-        .btn-update:hover {
-            background-color: #15803d;
+        .searching-box.show {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .loader {
+            width: 18px;
+            height: 18px;
+            border: 4px solid #34d399;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
+
+    <script>
+        function showSearchingBox() {
+            document.getElementById("searchingBox").classList.add("show");
+        }
+
+        function hideSearchingBox() {
+            document.getElementById("searchingBox").classList.remove("show");
+        }
+
+        window.addEventListener('load', function () {
+            hideSearchingBox();
+
+            const calendarInput = document.querySelector("#availabilityForm\\:date");
+            if (calendarInput) {
+                calendarInput.setAttribute("type", "date");
+                const today = new Date().toISOString().split("T")[0];
+                calendarInput.setAttribute("min", today);
+            }
+        });
+    </script>
 </head>
 <body>
 <f:view>
-<h:form prependId="false" styleClass="form-container">
+<h:form id="availabilityForm" styleClass="form-container">
 
     <h2>Search Availability by Date</h2>
 
+    <!-- Searching Box -->
+    <div id="searchingBox" class="searching-box">
+        <span><strong>Searching...</strong></span>
+        <div class="loader"></div>
+    </div>
+
+    <!-- Search Input -->
     <div class="centered-input-block">
         <h:outputLabel for="date" value="Select Date:" />
         <h:inputText id="date" value="#{availabilityController.selectedDate}">
@@ -182,16 +245,21 @@
         </h:inputText>
         <h:message for="date" styleClass="error" />
 
+        <!-- Buttons -->
         <div class="button-group">
-            <h:commandButton value="Search" action="#{availabilityController.fetchAvailabilityByDate}" styleClass="btn btn-blue" />
-            <h:commandButton value="Reset" action="#{availabilityController.resetSearchDateForm}" styleClass="btn btn-gray" />
+            <h:commandButton value="Search" action="#{availabilityController.fetchAvailabilityByDate}"
+                             styleClass="btn btn-blue" onclick="showSearchingBox()" />
+            <h:commandButton value="Reset" action="#{availabilityController.resetSearchDateForm}"
+                             styleClass="btn btn-gray" />
+            <h:commandButton value="Back" action="#{availabilityController.resetAddFormBackButton}" immediate="true"
+                             styleClass="btn btn-gray" />
         </div>
     </div>
 
+    <!-- Results Table -->
     <div class="table-wrapper">
         <h:dataTable value="#{availabilityController.paginatedList}" var="avail"
-                     rendered="#{not empty availabilityController.availabilityByDateList}"
-                     styleClass="availability-table">
+                     rendered="#{not empty availabilityController.availabilityByDateList}">
 
             <h:column>
                 <f:facet name="header">
@@ -259,7 +327,7 @@
                 <f:facet name="header">
                     <h:commandLink value="Notes" action="#{availabilityController.sortBy('notes')}" />
                 </f:facet>
-                <h:outputText value="#{avail.notes}" style="display:block; white-space:normal;" />
+                <h:outputText value="#{avail.notes}" style="white-space:normal;" />
             </h:column>
 
             <h:column>
@@ -267,31 +335,30 @@
                     <h:outputText value="Actions" />
                 </f:facet>
                 <h:commandButton value="Update" action="updateAvailability" styleClass="btn-update">
-                    <f:setPropertyActionListener 
-                        target="#{availabilityController.selectedAvailability}" 
-                        value="#{avail}" />
+                    <f:setPropertyActionListener target="#{availabilityController.selectedAvailability}" value="#{avail}" />
                 </h:commandButton>
             </h:column>
-
         </h:dataTable>
     </div>
 
+    <!-- Pagination -->
     <h:panelGroup rendered="#{not empty availabilityController.availabilityByDateList}">
         <div class="pagination">
-            <h:commandLink action="#{availabilityController.previousPage}" styleClass="link">
+            <h:commandLink action="#{availabilityController.previousPage}" styleClass="link"
+                           onclick="showSearchingBox()">
                 <h:outputText value="Previous" />
-                <f:param name="scroll" value="top" />
             </h:commandLink>
 
             <h:outputText value="Page #{availabilityController.currentPage + 1} of #{availabilityController.totalPages}" />
 
-            <h:commandLink action="#{availabilityController.nextPage}" styleClass="link">
+            <h:commandLink action="#{availabilityController.nextPage}" styleClass="link"
+                           onclick="showSearchingBox()">
                 <h:outputText value="Next" />
-                <f:param name="scroll" value="top" />
             </h:commandLink>
         </div>
     </h:panelGroup>
 
+    <!-- Message -->
     <h:outputText value="#{availabilityController.message}" styleClass="message" />
 
 </h:form>

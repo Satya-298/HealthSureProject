@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.java.jsf.provider.model.Appointment;
 import com.java.jsf.provider.model.MedicalProcedure;
+import com.java.jsf.provider.model.Prescription;
 
 public class Recipient implements Serializable{
 
@@ -28,6 +29,8 @@ public class Recipient implements Serializable{
     
     private Set<Appointment> appointment;
     private Set<MedicalProcedure> medicalProcedure;
+    private Set<Prescription> prescriptions;
+
 
     
 	public String gethId() {
@@ -141,10 +144,17 @@ public class Recipient implements Serializable{
 		this.medicalProcedure = medicalProcedure;
 	}
 	
+	public Set<Prescription> getPrescriptions() {
+		return prescriptions;
+	}
+	public void setPrescriptions(Set<Prescription> prescriptions) {
+		this.prescriptions = prescriptions;
+	}
+
 	public Recipient(String hId, String firstName, String lastName, String mobile, String userName, Gender gender,
 			Date dob, String address, Date createdAt, String password, String email, RecipientStatus status,
 			int loginAttempts, Date lockedUntil, Date lastLogin, Date passwordUpdatedAt, Set<Appointment> appointment,
-			Set<MedicalProcedure> medicalProcedure) {
+			Set<MedicalProcedure> medicalProcedure, Set<Prescription> prescriptions) {
 		this.hId = hId;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -163,6 +173,7 @@ public class Recipient implements Serializable{
 		this.passwordUpdatedAt = passwordUpdatedAt;
 		this.appointment = appointment;
 		this.medicalProcedure = medicalProcedure;
+		this.prescriptions = prescriptions;
 	}
 	
 	public Recipient() {

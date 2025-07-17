@@ -16,7 +16,7 @@
             justify-content: center;
             align-items: center;
         }
-
+	
         .menu-container {
             background-color: #ffffff;
             padding: 40px 30px;
@@ -83,7 +83,7 @@
             <h:commandLink value="List Availability by Date" action="listAvailabilityByDate"
                            styleClass="menu-link green" />
 
-            <h:commandLink value="Search Patient Medical History" action="medicalProcedureSearch"
+            <h:commandLink value="Search Patient Medical History" action="MedicalProcedureSearch"
                            styleClass="menu-link purple" />
         </div>
     </h:form>

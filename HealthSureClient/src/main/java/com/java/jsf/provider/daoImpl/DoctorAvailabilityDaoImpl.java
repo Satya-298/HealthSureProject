@@ -54,10 +54,10 @@ public class DoctorAvailabilityDaoImpl implements DoctorAvailabilityDao {
             String latestId = (String) query.uniqueResult();
 
             if (latestId == null) {
-                return "A001";
+                return "AVAIL001";
             } else {
-                int num = Integer.parseInt(latestId.substring(1));
-                return "A" + String.format("%03d", num + 1);
+                int num = Integer.parseInt(latestId.substring(5));
+                return "AVAIL" + String.format("%03d", num + 1);
             }
         } finally {
             if (session != null && session.isOpen()) {
@@ -99,6 +99,26 @@ public class DoctorAvailabilityDaoImpl implements DoctorAvailabilityDao {
         session.close();
         return doctor;
     }
+	
+	@Override
+	public boolean existsAvailability(String doctorId, Date availableDate) {
+	    sf = SessionHelper.getSessionFactory();
+	    session = sf.openSession();
+
+	    String hql = "SELECT COUNT(*) FROM DoctorAvailability a " +
+	                 "WHERE a.doctor.doctorId = :doctorId " +
+	                 "AND a.availableDate = :availableDate";
+
+	    Query query = session.createQuery(hql);
+	    query.setParameter("doctorId", doctorId);
+	    query.setParameter("availableDate", availableDate);
+
+	    Long count = (Long) query.uniqueResult();
+
+	    session.close();
+
+	    return count != null && count > 0;
+	}
 }
 
 

@@ -1,5 +1,6 @@
 package com.java.jsf.provider.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -147,138 +148,137 @@ public class DoctorAvailabilityController {
         return null;
     }
     
-    // Add Availability
+    //Add Availability
     public String addAvailability() {
         FacesContext context = FacesContext.getCurrentInstance();
+        boolean isValid = true;
 
-        String fieldId = "availabilityForm:doctorId";
-        String dateFieldId = "availabilityForm:date";
-        String startTimeFieldId = "availabilityForm:startTime";
-        String endTimeFieldId = "availabilityForm:endTime";
-        String slotTypeFieldId = "availabilityForm:slotType";
-        String totalSlotsFieldId = "availabilityForm:totalSlots";
-        String notesFieldId = "availabilityForm:notes";
+        context.getExternalContext().getFlash().setKeepMessages(true);
 
-        // Doctor ID Validation
         if (doctorId == null || doctorId.trim().isEmpty()) {
-            context.addMessage(fieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Doctor ID is required.", null));
-            return null;
-        }
-        if (!doctorId.matches("D\\d{3}")) {
-            context.addMessage(fieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Doctor ID format (e.g., D001).", null));
-            return null;
+            context.addMessage("availabilityForm:doctorId", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Doctor ID is required.", null));
+            isValid = false;
+        } else if (!doctorId.matches("DOC\\d{3}")) {
+            context.addMessage("availabilityForm:doctorId", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Doctor ID format (e.g., DOC001).", null));
+            isValid = false;
         }
 
-        // Doctor Existence
         Doctors doctor = availabilityDao.getDoctorById(doctorId);
         if (doctor == null || doctor.getProvider() == null) {
-            context.addMessage(fieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Doctor ID is invalid or not linked to any provider.", null));
-            return null;
+            context.addMessage("availabilityForm:doctorId", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Doctor ID is invalid or not linked to any provider.", null));
+            isValid = false;
         }
 
-        // Date Validation
         Date today = new Date();
         Date selectedDate = availability.getAvailableDate();
         if (selectedDate == null) {
-            context.addMessage(dateFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Enter the Available Date (yyyy-MM-dd)", null));
-            return null;
-        }
-        if (removeTime(selectedDate).before(removeTime(today))) {
-            context.addMessage(dateFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Date should not be in past", null));
-            return null;
-        }
+            context.addMessage("availabilityForm:date", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Enter the Available Date (yyyy-MM-dd)", null));
+            isValid = false;
+        } else {
+            Date todayNoTime = removeTime(today);
+            Date selectedNoTime = removeTime(selectedDate);
 
-        // Start Time Validation
-        Date startTime = availability.getStartTime();
-        if (startTime == null) {
-            context.addMessage(startTimeFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Enter Start Time (HH:mm)", null));
-            return null;
-        }
-        if (removeTime(today).equals(removeTime(selectedDate))) {
-            Date now = new Date();
-            Date fullStartTime = mergeDateAndTime(selectedDate, startTime);
-            if (fullStartTime.before(now)) {
-                context.addMessage(startTimeFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Start time should not be in the past.", null));
-                return null;
+            if (selectedNoTime.before(todayNoTime)) {
+                context.addMessage("availabilityForm:date", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Date should not be in the past", null));
+                isValid = false;
+            }
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(todayNoTime);
+            cal.add(Calendar.DAY_OF_MONTH, 30);
+            Date maxAllowedDate = cal.getTime();
+
+            if (selectedNoTime.after(maxAllowedDate)) {
+                String maxDateStr = new SimpleDateFormat("yyyy-MM-dd").format(maxAllowedDate);
+                context.addMessage("availabilityForm:date", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Date should not exceed " + maxDateStr, null));
+                isValid = false;
             }
         }
 
-        // End Time Validation
+        Date startTime = availability.getStartTime();
+        if (startTime == null) {
+            context.addMessage("availabilityForm:startTime", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Enter Start Time (HH:mm)", null));
+            isValid = false;
+        }
+
         Date endTime = availability.getEndTime();
         if (endTime == null) {
-            context.addMessage(endTimeFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "End Time is required (HH:mm)", null));
-            return null;
-        }
-        Date fullStart = mergeDateAndTime(selectedDate, startTime);
-        Date fullEnd = mergeDateAndTime(selectedDate, endTime);
-        if (fullEnd.before(fullStart)) {
-            context.addMessage(endTimeFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "End time should be after Start time.", null));
-            return null;
+            context.addMessage("availabilityForm:endTime", new FacesMessage(FacesMessage.SEVERITY_ERROR, "End Time is required (HH:mm)", null));
+            isValid = false;
         }
 
-        // Slot Type Validation
+        if (selectedDate != null && startTime != null && endTime != null) {
+            Date fullStart = mergeDateAndTime(selectedDate, startTime);
+            Date fullEnd = mergeDateAndTime(selectedDate, endTime);
+
+            if (removeTime(selectedDate).equals(removeTime(today))) {
+                if (fullStart.before(today)) {
+                    context.addMessage("availabilityForm:startTime", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Start time should not be in the past.", null));
+                    isValid = false;
+                }
+            }
+
+            if (fullEnd.before(fullStart)) {
+                context.addMessage("availabilityForm:endTime", new FacesMessage(FacesMessage.SEVERITY_ERROR, "End time should be after Start time.", null));
+                isValid = false;
+            }
+
+            int durationMinutes = (int) ((fullEnd.getTime() - fullStart.getTime()) / (60 * 1000));
+            if (durationMinutes > 1440) {
+                context.addMessage("availabilityForm:endTime", new FacesMessage(FacesMessage.SEVERITY_ERROR, "The availability range must not exceed 24 hours.", null));
+                isValid = false;
+            }
+
+            int totalSlots = availability.getTotalSlots() != 0 ? availability.getTotalSlots() : 1;
+            if (totalSlots > durationMinutes / 10) {
+                context.addMessage("availabilityForm:totalSlots", new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "Total slots should not exceed " + (durationMinutes / 10) + " for a " + (durationMinutes / 60) + " hour duration.", null));
+                isValid = false;
+            }
+
+        }
+
         if (availability.getSlotType() == null || availability.getSlotType().toString().trim().isEmpty()) {
-            context.addMessage(slotTypeFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Slot Type is required.", null));
+            context.addMessage("availabilityForm:slotType", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Slot Type is required.", null));
+            isValid = false;
+        }
+
+        if (availability.getTotalSlots() <= 0) {
+            context.addMessage("availabilityForm:totalSlots", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Total slots must not be 0.", null));
+            isValid = false;
+        } else if (availability.getTotalSlots() > 1000) {
+            context.addMessage("availabilityForm:totalSlots", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Total slots must not exceed 1000.", null));
+            isValid = false;
+        }
+
+        if (!isValid) {
+            this.message = "Validation Failed";
             return null;
         }
 
-        // Recurring Setup
-        if (SlotType.STANDARD.equals(availability.getSlotType())) {
-            availability.setRecurring(true);
-        } else if (SlotType.ADHOC.equals(availability.getSlotType())) {
-            availability.setRecurring(false);
-        }
+        try {
+            availability.setDoctor(doctor);
+            availability.setAvailabilityId(availabilityDao.generateAvailabilityId());
+            availability.setRecurring(SlotType.STANDARD.equals(availability.getSlotType()));
+            availabilityDao.addAvailability(availability);
 
-        // Total Slots Validation
-        Integer totalSlots = availability.getTotalSlots();
-        if (totalSlots == null || totalSlots <= 0) {
-            context.addMessage(totalSlotsFieldId,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Enter Total Slots.", null));
+            availability = new DoctorAvailability();
+            availability.setDoctor(new Doctors());
+            availabilityByDateList = null;
+            doctorId = null;
+
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Availability Added Successfully...", null));
+            this.message = "Availability Added Successfully...";
+            return null;
+        } catch (Exception e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Failed to add availability due to a system error.", null));
+            this.message = "Addition Failed";
             return null;
         }
-
-        long durationMillis = fullEnd.getTime() - fullStart.getTime();
-        long durationMinutes = durationMillis / (60 * 1000);
-        int maxAllowedSlots = (int) (durationMinutes / 10);  // 6 per hour
-
-        if (totalSlots > maxAllowedSlots) {
-            context.addMessage(totalSlotsFieldId,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Total slots should not exceed " + maxAllowedSlots + " for a " + ((int)durationMinutes / 60) + " hour duration.", null));
-            return null;
-        }
-
-        availability.setTotalSlots(totalSlots);
-
-        // Notes Validation
-        String notes = availability.getNotes();
-        if (notes == null || notes.trim().length() < 10) {
-            context.addMessage(notesFieldId,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Notes must be at least 10 characters long.", null));
-            return null;
-        }
-        if (notes.trim().length() > 100) {
-            context.addMessage(notesFieldId,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Notes must not exceed 100 characters.", null));
-            return null;
-        }
-
-        // Save to DB
-        availability.setDoctor(doctor);
-        String newId = availabilityDao.generateAvailabilityId();
-        availability.setAvailabilityId(newId);
-        availabilityDao.addAvailability(availability);
-
-        // Reset Form
-        availability = new DoctorAvailability();
-        availability.setDoctor(new Doctors());
-        selectedDate = null;
-        availabilityByDateList = null;
-        doctorId = null;
-
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Availability added successfully.", null));
-        return "availabilitySuccess";
     }
+
+
+
 
     
     private Date removeTime(Date date) {
@@ -327,11 +327,10 @@ public class DoctorAvailabilityController {
     // Fetch by Date
     public String fetchAvailabilityByDate() {
         FacesContext context = FacesContext.getCurrentInstance();
-        String dateFieldId = "date";
 
         // 1. Null check
         if (selectedDate == null) {
-            context.addMessage(dateFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please select a date.", null));
+            context.addMessage("availabilityForm:date", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please select a date.", null));
             availabilityByDateList = null;
             return null;
         }
@@ -340,7 +339,7 @@ public class DoctorAvailabilityController {
         Date today = removeTime(new Date());
         Date inputDate = removeTime(selectedDate);
         if (inputDate.before(today)) {
-            context.addMessage(dateFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Date should not be in the past.", null));
+            context.addMessage("availabilityForm:date", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Date should not be in the past.", null));
             availabilityByDateList = null;
             return null;
         }
@@ -350,7 +349,7 @@ public class DoctorAvailabilityController {
 
         // 4. No result found
         if (availabilityByDateList == null || availabilityByDateList.isEmpty()) {
-            context.addMessage(dateFieldId, new FacesMessage(FacesMessage.SEVERITY_WARN, "Availability Date Does Not Exist.", null));
+            context.addMessage("availabilityForm:date", new FacesMessage(FacesMessage.SEVERITY_WARN, "Availability Date Does Not Exist.", null));
             availabilityByDateList = null;
             return null;
         }
@@ -389,13 +388,6 @@ public class DoctorAvailabilityController {
     public String updateAvailability() {
         FacesContext context = FacesContext.getCurrentInstance();
 
-        String dateFieldId = "availabilityForm:date";
-        String startTimeFieldId = "availabilityForm:startTime";
-        String endTimeFieldId = "availabilityForm:endTime";
-        String slotTypeFieldId = "availabilityForm:slotType";
-        String totalSlotsFieldId = "availabilityForm:totalSlots";
-        String notesFieldId = "availabilityForm:notes";
-
         if (selectedAvailability == null) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "No availability selected for update.", null));
             return null;
@@ -406,18 +398,18 @@ public class DoctorAvailabilityController {
 
         // Date Validation
         if (selectedDate == null) {
-            context.addMessage(dateFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Enter the Available Date (yyyy-MM-dd)", null));
+            context.addMessage("availabilityForm:date", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Enter the Available Date (yyyy-MM-dd)", null));
             return null;
         }
         if (removeTime(selectedDate).before(removeTime(today))) {
-            context.addMessage(dateFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Date should not be in past", null));
+            context.addMessage("availabilityForm:date", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Date should not be in past", null));
             return null;
         }
 
         // Start Time
         Date startTime = selectedAvailability.getStartTime();
         if (startTime == null) {
-            context.addMessage(startTimeFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Start Time is required.", null));
+            context.addMessage("availabilityForm:startTime", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Start Time is required.", null));
             return null;
         }
 
@@ -426,7 +418,7 @@ public class DoctorAvailabilityController {
             Date now = new Date();
             Date fullStartTime = mergeDateAndTime(selectedDate, startTime);
             if (fullStartTime.before(now)) {
-                context.addMessage(startTimeFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Start time should not be in the past.", null));
+                context.addMessage("availabilityForm:startTime", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Start time should not be in the past.", null));
                 return null;
             }
         }
@@ -434,20 +426,20 @@ public class DoctorAvailabilityController {
         // End Time
         Date endTime = selectedAvailability.getEndTime();
         if (endTime == null) {
-            context.addMessage(endTimeFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "End Time is required.", null));
+            context.addMessage("availabilityForm:endTime", new FacesMessage(FacesMessage.SEVERITY_ERROR, "End Time is required.", null));
             return null;
         }
 
         Date fullStart = mergeDateAndTime(selectedDate, startTime);
         Date fullEnd = mergeDateAndTime(selectedDate, endTime);
         if (fullEnd.before(fullStart)) {
-            context.addMessage(endTimeFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "End time should be after Start time.", null));
+            context.addMessage("availabilityForm:endTime", new FacesMessage(FacesMessage.SEVERITY_ERROR, "End time should be after Start time.", null));
             return null;
         }
 
         // Slot Type
         if (selectedAvailability.getSlotType() == null || selectedAvailability.getSlotType().toString().trim().isEmpty()) {
-            context.addMessage(slotTypeFieldId, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Slot Type is required.", null));
+            context.addMessage("availabilityForm:slotType", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Slot Type is required.", null));
             return null;
         }
 
@@ -461,7 +453,7 @@ public class DoctorAvailabilityController {
         // Total Slots
         Integer totalSlots = selectedAvailability.getTotalSlots();
         if (totalSlots == null || totalSlots <= 0) {
-            context.addMessage(totalSlotsFieldId,
+            context.addMessage("availabilityForm:totalSlots",
                 new FacesMessage(FacesMessage.SEVERITY_ERROR, "Enter Total Slots.", null));
             return null;
         }
@@ -471,22 +463,9 @@ public class DoctorAvailabilityController {
         int maxAllowedSlots = (int) (durationMinutes / 10);
 
         if (totalSlots > maxAllowedSlots) {
-            context.addMessage(totalSlotsFieldId,
+            context.addMessage("availabilityForm:totalSlots",
                 new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Total slots should not exceed " + maxAllowedSlots + " for a " + (durationMinutes / 60) + " hour duration.", null));
-            return null;
-        }
-
-        // Notes
-        String notes = selectedAvailability.getNotes();
-        if (notes == null || notes.trim().length() < 10) {
-            context.addMessage(notesFieldId,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Notes must be at least 10 characters long.", null));
-            return null;
-        }
-        if (notes.trim().length() > 100) {
-            context.addMessage(notesFieldId,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Notes must not exceed 100 characters.", null));
             return null;
         }
 
@@ -510,6 +489,21 @@ public class DoctorAvailabilityController {
         this.backupAvailability = null;
 
         return "addAvailability?faces-redirect=true";
+    }
+    
+    // Reset Full Form
+    public String resetAddFormBackButton() {
+        this.availability = new DoctorAvailability();
+        this.availability.setDoctor(new Doctors());
+        this.doctorId = null;
+        this.selectedDate = null;
+        this.message = null;
+        this.availabilityList = null;
+        this.availabilityByDateList = null;
+        this.selectedAvailability = null;
+        this.backupAvailability = null;
+
+        return "menu?faces-redirect=true";
     }
     
     public String resetSearchDateForm() {
@@ -629,7 +623,6 @@ public class DoctorAvailabilityController {
         this.message = message;
     }
 }
-
 
 
 
