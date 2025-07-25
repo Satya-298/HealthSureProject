@@ -7,20 +7,14 @@ import com.java.jsf.provider.model.Prescription;
 
 public interface MedicalHistoryDao {
 	 
-	 List<MedicalProcedure> searchByHid(String doctorId, String hid);
-	 
-	 List<MedicalProcedure> searchByName(String doctorId, String namePart);
-	 
-	 List<MedicalProcedure> searchByMobile(String doctorId, String mobile);
+	List<MedicalProcedure> searchByHid(String doctorId, String hid, String procedureType);
+    List<MedicalProcedure> searchByNameStartsWith(String doctorId, String prefix, String procedureType);
+    List<MedicalProcedure> searchByNameContains(String doctorId, String substring, String procedureType);
+    List<MedicalProcedure> searchByMobile(String doctorId, String mobile, String procedureType);
+    List<MedicalProcedure> searchByDoctorIdWithDetails(String doctorId, String procedureType);
+    boolean doctorExists(String doctorId);
+    Prescription getPrescriptionWithDetails(String prescriptionId);
+	MedicalProcedure getProcedureWithLogs(String procedureId);
 
-	 List<MedicalProcedure> searchByNameStartsWith(String doctorId, String prefix);
-
-	 List<MedicalProcedure> searchByNameContains(String doctorId, String substring);
-
-	 List<MedicalProcedure> getAllProceduresByDoctor(String doctorId);
-	 
-	 boolean doctorExists(String doctorId);
-
-	 List<Prescription> getPrescriptionsByProcedureId(String procedureId);
-	 
+    
 }

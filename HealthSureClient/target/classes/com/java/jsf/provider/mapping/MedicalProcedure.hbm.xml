@@ -53,4 +53,13 @@
     </set>
  
   </class>
+  
+  <query name="MedicalProcedure.fetchWithDetailsByDoctorId">
+      SELECT DISTINCT p
+      FROM MedicalProcedure p
+      LEFT JOIN FETCH p.prescription pr
+      LEFT JOIN FETCH pr.prescribedMedicines
+      LEFT JOIN FETCH pr.tests
+      WHERE p.doctor.doctorId = :docId
+  </query>
 </hibernate-mapping>

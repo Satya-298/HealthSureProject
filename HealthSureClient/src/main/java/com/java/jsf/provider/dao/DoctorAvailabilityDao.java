@@ -15,6 +15,7 @@ public interface DoctorAvailabilityDao {
 	String generateAvailabilityId();
 	Doctors getDoctorById(String doctorId);
 	boolean existsAvailability(String doctorId, Date availableDate);
+//	boolean deleteAvailabilityById(String availabilityId);
 
 
 }

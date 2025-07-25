@@ -16,7 +16,7 @@
             justify-content: center;
             align-items: center;
         }
-	
+
         .menu-container {
             background-color: #ffffff;
             padding: 40px 30px;
@@ -69,6 +69,14 @@
         .menu-link.purple:hover {
             background-color: #7c3aed;
         }
+
+        .menu-link.cyan {
+            background-color: #06b6d4;
+        }
+
+        .menu-link.cyan:hover {
+            background-color: #0891b2;
+        }
     </style>
 </head>
 <body>
@@ -85,6 +93,9 @@
 
             <h:commandLink value="Search Patient Medical History" action="MedicalProcedureSearch"
                            styleClass="menu-link purple" />
+
+            <h:commandLink value="View Appointments" action="Appointments"
+                           styleClass="menu-link cyan" />
         </div>
     </h:form>
 </f:view>

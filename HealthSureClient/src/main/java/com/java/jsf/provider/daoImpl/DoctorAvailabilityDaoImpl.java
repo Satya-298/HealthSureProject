@@ -119,6 +119,32 @@ public class DoctorAvailabilityDaoImpl implements DoctorAvailabilityDao {
 
 	    return count != null && count > 0;
 	}
+	
+//	@Override
+//	public boolean deleteAvailabilityById(String availabilityId) {
+//	    sf = SessionHelper.getSessionFactory();
+//	    session = sf.openSession();
+//	    Transaction tx = null;
+//	    try {
+//	        tx = session.beginTransaction();
+//	        DoctorAvailability availability = (DoctorAvailability) session.get(DoctorAvailability.class, availabilityId);
+//
+//	        if (availability != null) {
+//	            session.delete(availability);
+//	            tx.commit();
+//	            return true;
+//	        } else {
+//	            if (tx != null) tx.rollback();
+//	            return false;
+//	        }
+//	    } catch (Exception e) {
+//	        if (tx != null) tx.rollback();
+//	        e.printStackTrace();
+//	        return false;
+//	    } finally {
+//	        if (session != null) session.close();
+//	    }
+//	}
 }
 
 

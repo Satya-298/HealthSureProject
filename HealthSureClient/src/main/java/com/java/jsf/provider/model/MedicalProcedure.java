@@ -2,6 +2,7 @@ package com.java.jsf.provider.model;
  
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
  
 import com.java.jsf.recipient.model.Recipient;
@@ -186,5 +187,5 @@ public class MedicalProcedure implements Serializable {
                 ", logsCount=" + (logs != null ? logs.size() : 0) +
                 "]";
     }
- 
+
 }

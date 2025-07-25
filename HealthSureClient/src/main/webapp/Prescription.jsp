@@ -1,119 +1,221 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
 <%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
 
 <html>
 <head>
     <title>Prescriptions</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        td, th {
-            padding: 8px;
-            vertical-align: top;
-            word-break: break-word;
+        body {
+            background-color: #f3f4f6;
+            font-family: Arial, sans-serif;
         }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .heading {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            background-color: #4b5563;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #1f2937;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+
         th {
             background-color: #f1f5f9;
             font-weight: bold;
         }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .pagination a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .pagination a:hover {
+            text-decoration: underline;
+        }
+
+        .arrow {
+            margin-left: 5px;
+            font-size: 13px;
+        }
     </style>
 </head>
 
-<body class="bg-gray-100 min-h-screen py-8 px-4">
+<body>
 <f:view>
-<h:form id="prescriptionForm" styleClass="bg-white max-w-6xl mx-auto p-8 rounded-lg shadow-md">
+    <h:form id="prescriptionForm" styleClass="container">
 
-    <h2 class="text-2xl font-bold text-center text-blue-600 mb-6">
-    	Prescriptions for Procedure ID <h:outputText value="#{medicalHistoryController.medicalProcedure.procedureId}" />
-	</h2>
 
-    <!-- Back Button -->
-    <div class="mb-4">
-        <h:commandButton value="Back to Procedures"
-                         action="MedicalProcedureSearch?faces-redirect=true"
-                         styleClass="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-800"
-                         immediate="true" />
-    </div>
+        <!-- Title -->
+        <div class="heading">
+            Prescriptions for Procedure ID
+            <h:outputText value="#{medicalHistoryController.medicalProcedure.procedureId}" />
+        </div>
 
-    <!-- Prescription Table -->
-    <div class="overflow-x-auto">
-        <h:dataTable value="#{medicalHistoryController.paginatedPrescriptions}" var="presc"
-                     styleClass="w-full border border-gray-300 rounded text-center"
-                     rendered="#{not empty medicalHistoryController.prescriptionList}">
+       	<h:outputText value="Total Records : #{medicalHistoryController.totalPrescriptionRecords}"/>
 
-            <!-- Prescription ID -->
-            <h:column>
-                <f:facet name="header">
-                    <h:commandLink value="Prescription ID"
-                                   action="#{medicalHistoryController.sortPrescriptionsBy('prescriptionId')}" />
-                </f:facet>
-                <h:outputText value="#{presc.prescriptionId}" />
-            </h:column>
+        <!-- Back Button -->
+        <div style="margin-bottom: 20px;">
+            <h:commandButton value="Back to Procedures"
+                             action="MedicalProcedureSearch?faces-redirect=true"
+                             styleClass="btn"
+                             immediate="true" />
+        </div>
 
-            <!-- Written On -->
-            <h:column>
-                <f:facet name="header">
-                    <h:commandLink value="Written On"
-                                   action="#{medicalHistoryController.sortPrescriptionsBy('writtenOn')}" />
-                </f:facet>
-                <h:outputText value="#{presc.writtenOn}">
-                    <f:convertDateTime pattern="yyyy-MM-dd" />
-                </h:outputText>
-            </h:column>
+        <!-- Prescription Table -->
+        <div class="table-container">
+            <h:dataTable value="#{medicalHistoryController.paginatedPrescriptions}" var="presc"
+                         styleClass="prescription-table"
+                         rendered="#{not empty medicalHistoryController.prescriptionList}">
 
-            <!-- Start Date -->
-            <h:column>
-                <f:facet name="header">
-                    <h:commandLink value="Start Date"
-                                   action="#{medicalHistoryController.sortPrescriptionsBy('startDate')}" />
-                </f:facet>
-                <h:outputText value="#{presc.startDate}">
-                    <f:convertDateTime pattern="yyyy-MM-dd" />
-                </h:outputText>
-            </h:column>
+                <!-- Prescription ID -->
+                <h:column>
+                    <f:facet name="header">
+                        <h:commandLink action="#{medicalHistoryController.sortPrescriptionsBy('prescriptionId')}">
+                            <span>Prescription ID
+                                <h:outputText styleClass="arrow"
+                                              value="#{medicalHistoryController.prescriptionSortColumn eq 'prescriptionId' ? (medicalHistoryController.prescriptionSortAscending ? '▲' : '▼') : ''}" />
+                            </span>
+                        </h:commandLink>
+                    </f:facet>
+                    <h:outputText value="#{presc.prescriptionId}" />
+                </h:column>
 
-            <!-- End Date -->
-            <h:column>
-                <f:facet name="header">
-                    <h:commandLink value="End Date"
-                                   action="#{medicalHistoryController.sortPrescriptionsBy('endDate')}" />
-                </f:facet>
-                <h:outputText value="#{presc.endDate}">
-                    <f:convertDateTime pattern="yyyy-MM-dd" />
-                </h:outputText>
-            </h:column>
+                <!-- Written On -->
+                <h:column>
+                    <f:facet name="header">
+                        <h:commandLink action="#{medicalHistoryController.sortPrescriptionsBy('writtenOn')}">
+                            <span>Written On
+                                <h:outputText styleClass="arrow"
+                                              value="#{medicalHistoryController.prescriptionSortColumn eq 'writtenOn' ? (medicalHistoryController.prescriptionSortAscending ? '▲' : '▼') : ''}" />
+                            </span>
+                        </h:commandLink>
+                    </f:facet>
+                    <h:outputText value="#{presc.writtenOn}">
+                        <f:convertDateTime pattern="dd-MM-yyyy" />
+                    </h:outputText>
+                </h:column>
 
-            <!-- Doctor Name -->
-            <h:column>
-                <f:facet name="header">
-                    <h:commandLink value="Doctor"
-                                   action="#{medicalHistoryController.sortPrescriptionsBy('doctorName')}" />
-                </f:facet>
-                <h:outputText value="#{presc.doctor.doctorName}" />
-            </h:column>
-        </h:dataTable>
-    </div>
+                <!-- Start Date -->
+                <h:column>
+                    <f:facet name="header">
+                        <h:commandLink action="#{medicalHistoryController.sortPrescriptionsBy('startDate')}">
+                            <span>Start Date
+                                <h:outputText styleClass="arrow"
+                                              value="#{medicalHistoryController.prescriptionSortColumn eq 'startDate' ? (medicalHistoryController.prescriptionSortAscending ? '▲' : '▼') : ''}" />
+                            </span>
+                        </h:commandLink>
+                    </f:facet>
+                    <h:outputText value="#{presc.startDate}">
+                        <f:convertDateTime pattern="dd-MM-yyyy" />
+                    </h:outputText>
+                </h:column>
 
-    <!-- Pagination Controls -->
-    <div class="mt-6 flex justify-center items-center gap-8">
-        <!-- Previous -->
-        <h:commandLink action="#{medicalHistoryController.previousPrescriptionPage}"
-                       rendered="#{medicalHistoryController.prescriptionCurrentPage > 0}"
-                       styleClass="text-blue-600 hover:underline">
-            <h:outputText value="Previous" />
-        </h:commandLink>
+                <!-- End Date -->
+                <h:column>
+                    <f:facet name="header">
+                        <h:commandLink action="#{medicalHistoryController.sortPrescriptionsBy('endDate')}">
+                            <span>End Date
+                                <h:outputText styleClass="arrow"
+                                              value="#{medicalHistoryController.prescriptionSortColumn eq 'endDate' ? (medicalHistoryController.prescriptionSortAscending ? '▲' : '▼') : ''}" />
+                            </span>
+                        </h:commandLink>
+                    </f:facet>
+                    <h:outputText value="#{presc.endDate}">
+                        <f:convertDateTime pattern="dd-MM-yyyy" />
+                    </h:outputText>
+                </h:column>
 
-        <!-- Page Indicator -->
-        <h:outputText value="Page #{medicalHistoryController.prescriptionCurrentPage + 1} of #{medicalHistoryController.totalPrescriptionPages}" />
+                <!-- Doctor Name -->
+                <h:column>
+                    <f:facet name="header">
+                        <h:commandLink action="#{medicalHistoryController.sortPrescriptionsBy('doctorName')}">
+                            <span>Doctor
+                                <h:outputText styleClass="arrow"
+                                              value="#{medicalHistoryController.prescriptionSortColumn eq 'doctorName' ? (medicalHistoryController.prescriptionSortAscending ? '▲' : '▼') : ''}" />
+                            </span>
+                        </h:commandLink>
+                    </f:facet>
+                    <h:outputText value="#{presc.doctor.doctorName}" />
+                </h:column>
 
-        <!-- Next -->
-        <h:commandLink action="#{medicalHistoryController.nextPrescriptionPage}"
-                       rendered="#{medicalHistoryController.prescriptionCurrentPage + 1 < medicalHistoryController.totalPrescriptionPages}"
-                       styleClass="text-blue-600 hover:underline">
-            <h:outputText value="Next" />
-        </h:commandLink>
-    </div>
+                <!-- View Medicines -->
+                <h:column>
+                    <f:facet name="header"><h:outputText value="View Prescribed Medicines" /></f:facet>
+                    <h:commandButton value="View Medicines"
+                                     action="#{medicalHistoryController.viewMedicinesForSelectedPrescription(presc)}"
+                                     styleClass="btn" />
+                </h:column>
 
-</h:form>
+                <!-- View Tests -->
+                <h:column>
+                    <f:facet name="header"><h:outputText value="View Tests" /></f:facet>
+                    <h:commandButton value="View Tests"
+                                     action="#{medicalHistoryController.viewTestsForSelectedPrescription(presc)}"
+                                     styleClass="btn" />
+                </h:column>
+
+            </h:dataTable>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination">
+            <h:panelGroup layout="block" styleClass="pagination-panel" style="margin-top: 20px;">
+                <h:commandButton value="First" action="#{medicalHistoryController.goToFirstPrescriptionPage}" disabled="#{medicalHistoryController.prescriptionCurrentPage == 1}" />
+                    <h:commandButton value="Previous" action="#{medicalHistoryController.goToPreviousPrescriptionPage}" disabled="#{medicalHistoryController.prescriptionCurrentPage == 1}" />
+                    <h:outputText value="Page #{medicalHistoryController.prescriptionCurrentPage} of #{medicalHistoryController.totalPrescriptionPages}" />
+                    <h:commandButton value="Next" action="#{medicalHistoryController.goToNextPrescriptionPage}" disabled="#{medicalHistoryController.prescriptionCurrentPage == medicalHistoryController.totalPrescriptionPages}" />
+                    <h:commandButton value="Last" action="#{medicalHistoryController.goToLastPrescriptionPage}" disabled="#{medicalHistoryController.prescriptionCurrentPage == medicalHistoryController.totalPrescriptionPages}" />
+            </h:panelGroup>
+        </div>
+
+    </h:form>
 </f:view>
 </body>
 </html>

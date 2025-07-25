@@ -1,12 +1,12 @@
 package com.java.jsf.provider.daoImpl;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Collections;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import com.java.jsf.provider.dao.AppointmentDao;
@@ -16,114 +16,92 @@ import com.java.jsf.util.SessionHelper;
 
 public class AppointmentDaoImpl implements AppointmentDao {
 
-    private static final SessionFactory sf;
+    private static final SessionFactory sessionFactory;
 
     static {
-        sf = SessionHelper.getSessionFactory();
-    }
-
-    @Override
-    public List<Appointment> getAllAppointments() {
-        Session session = null;
-        try {
-            session = sf.openSession();
-            Query query = session.createQuery("FROM Appointment");
-            return query.list();
-        } finally {
-            if (session != null) session.close();
-        }
-    }
-
-    @Override
-    public List<Appointment> getAppointmentsByStatus(String status) {
-        Session session = null;
-        try {
-            session = sf.openSession();
-            Query query = session.createQuery("FROM Appointment WHERE status = :status");
-            query.setParameter("status", AppointmentStatus.valueOf(status));
-            return query.list();
-        } finally {
-            if (session != null) session.close();
-        }
-    }
-
-    @Override
-    public Appointment getAppointmentById(String appointmentId) {
-        Session session = null;
-        try {
-            session = sf.openSession();
-            return (Appointment) session.get(Appointment.class, appointmentId);
-        } finally {
-            if (session != null) session.close();
-        }
-    }
-
-    @Override
-    public boolean approveAppointment(String appointmentId) {
-        return updateStatus(appointmentId, AppointmentStatus.BOOKED);
-    }
-
-    @Override
-    public boolean completeAppointment(String appointmentId) {
-        return updateStatus(appointmentId, AppointmentStatus.COMPLETED);
-    }
-
-    @Override
-    public boolean cancelAppointment(String appointmentId) {
-        return updateStatus(appointmentId, AppointmentStatus.CANCELLED);
-    }
-
-    private boolean updateStatus(String appointmentId, AppointmentStatus newStatus) {
-        Session session = null;
-        Transaction tx = null;
-        try {
-            session = sf.openSession();
-            tx = session.beginTransaction();
-
-            Appointment appt = (Appointment) session.get(Appointment.class, appointmentId);
-            if (appt == null) return false;
-
-            appt.setStatus(newStatus);
-            Date now = new Date();
-
-            if (newStatus == AppointmentStatus.BOOKED) {
-                appt.setBookedAt(now);
-            } else if (newStatus == AppointmentStatus.COMPLETED) {
-                appt.setCompletedAt(now);
-            } else if (newStatus == AppointmentStatus.CANCELLED) {
-                appt.setCancelledAt(now);
-            }
-
-            session.update(appt);
-            tx.commit();
-            return true;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-            return false;
-        } finally {
-            if (session != null) session.close();
-        }
+        sessionFactory = SessionHelper.getSessionFactory();
     }
 
     @Override
     public List<Appointment> getAppointmentsByDoctorAndStatus(String doctorId, String status) {
-        Session session = null;
-        try {
-            AppointmentStatus stat;
-            try {
-                stat = AppointmentStatus.valueOf(status);
-            } catch (IllegalArgumentException e) {
-                return Collections.emptyList(); // Java 8 compatible replacement for List.of()
-            }
-
-            session = sf.openSession();
-            Query query = session.createQuery("FROM Appointment WHERE doctor.doctorId = :docId AND status = :status");
-            query.setParameter("docId", doctorId);
-            query.setParameter("status", stat);
-            return query.list();
-        } finally {
-            if (session != null) session.close();
-        }
+        Session session = sessionFactory.openSession();
+        String hql = "FROM Appointment a WHERE a.doctor.doctorId = :doctorId AND a.status = :status";
+        Query query = session.createQuery(hql);
+        query.setParameter("doctorId", doctorId);
+        query.setParameter("status", AppointmentStatus.valueOf(status.toUpperCase()));
+        List<Appointment> result = query.list();
+        session.close();
+        return result;
     }
+
+    @Override
+    public boolean markAppointmentAsBooked(String appointmentId, Timestamp bookedAt) {
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        String hql = "UPDATE Appointment a SET a.status = :status, a.bookedAt = :bookedAt WHERE a.appointmentId = :appointmentId AND a.status = :pendingStatus";
+        Query query = session.createQuery(hql);
+        query.setParameter("status", AppointmentStatus.BOOKED);
+        query.setParameter("bookedAt", bookedAt);
+        query.setParameter("appointmentId", appointmentId);
+        query.setParameter("pendingStatus", AppointmentStatus.PENDING);
+        int updated = query.executeUpdate();
+        session.getTransaction().commit();
+        session.close();
+        return updated > 0;
+    }
+
+    @Override
+    public boolean cancelPendingAppointmentByDoctor(String appointmentId, Timestamp cancelledAt) {
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        String hql = "UPDATE Appointment a SET a.status = :status, a.cancelledAt = :cancelledAt WHERE a.appointmentId = :appointmentId AND a.status = :pendingStatus";
+        Query query = session.createQuery(hql);
+        query.setParameter("status", AppointmentStatus.CANCELLED);
+        query.setParameter("cancelledAt", cancelledAt);
+        query.setParameter("appointmentId", appointmentId);
+        query.setParameter("pendingStatus", AppointmentStatus.PENDING);
+        int updated = query.executeUpdate();
+        session.getTransaction().commit();
+        session.close();
+        return updated > 0;
+    }
+
+	@Override
+	public Appointment getAppointmentById(String appointmentId) {
+		Session session = sessionFactory.openSession();
+	    Appointment appointment = null;
+	    try {
+	        appointment = (Appointment) session.get(Appointment.class, appointmentId);
+	    } finally {
+	        session.close();
+	    }
+	    return appointment;
+	}
+	
+	@Override
+	public List<Appointment> getAllAppointments() {
+	    Session session = sessionFactory.openSession();
+	    String hql = "FROM Appointment a JOIN FETCH a.availability JOIN FETCH a.doctor";
+	    Query query = session.createQuery(hql);
+	    List<Appointment> list = query.list();
+	    session.close();
+	    return list;
+	}
+
+
+	@Override
+	public List<Appointment> getCompletedAppointments() {
+	    Session session = sessionFactory.openSession();
+	    String hql = "FROM Appointment a " +
+	                 "JOIN FETCH a.recipient " +
+	                 "JOIN FETCH a.availability " +
+	                 "JOIN FETCH a.doctor " +
+	                 "WHERE a.status = :status";
+	    Query query = session.createQuery(hql);
+	    query.setParameter("status", AppointmentStatus.COMPLETED);
+	    List<Appointment> list = query.list();
+	    session.close();
+	    return list;
+	}
+	
 }

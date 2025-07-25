@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -30,10 +31,20 @@ public class DoctorAvailabilityController {
     private String sortColumn = "";
     private boolean sortAscending = true;
 
-    private int currentPage = 0;
+    private int currentPage = 1;
     private int pageSize = 5;
 
-    public int getCurrentPage() {
+    private int totalRecords;
+
+    public int getTotalRecords() {
+        return totalRecords;
+    }
+
+    public void setTotalRecords(int totalRecords) {
+		this.totalRecords = totalRecords;
+	}
+
+	public int getCurrentPage() {
         return currentPage;
     }
 
@@ -55,22 +66,21 @@ public class DoctorAvailabilityController {
     }
 
     public boolean isNextButtonDisabled() {
-        if (availabilityByDateList == null) return true;
-        return ((currentPage + 1) * pageSize) >= availabilityByDateList.size();
+        return currentPage >= getTotalPages();
     }
 
     public boolean isPreviousButtonDisabled() {
-        return currentPage == 0;
+        return currentPage <= 1;
     }
 
     public List<DoctorAvailability> getPaginatedList() {
         if (availabilityByDateList == null) return null;
 
-        int start = currentPage * pageSize;
+        int start = (currentPage - 1) * pageSize;
         int end = Math.min(start + pageSize, availabilityByDateList.size());
 
         if (start >= end) {
-            currentPage = 0;
+            currentPage = 1;
             start = 0;
             end = Math.min(pageSize, availabilityByDateList.size());
         }
@@ -78,22 +88,32 @@ public class DoctorAvailabilityController {
         return availabilityByDateList.subList(start, end);
     }
 
+
+    public void goToFirstPage() {
+        currentPage = 1;
+    }
+ 
+    public void goToLastPage() {
+        currentPage = getTotalPages();
+    }
+ 
+
     public String nextPage() {
-        if (currentPage < getTotalPages() - 1) {
+        if (currentPage < getTotalPages()) {
             currentPage++;
         }
         return null;
     }
 
     public String previousPage() {
-        if (currentPage > 0) {
+        if (currentPage > 1) {
             currentPage--;
         }
         return null;
     }
 
     public void resetPagination() {
-        currentPage = 0;
+        currentPage = 1;
     }
 
     public String sortBy(String column) {
@@ -110,19 +130,21 @@ public class DoctorAvailabilityController {
                     int result = 0;
                     switch (column) {
                         case "availabilityId":
-                            result = a1.getAvailabilityId().compareTo(a2.getAvailabilityId());
+                            result = safeCompare(a1.getAvailabilityId(), a2.getAvailabilityId());
                             break;
                         case "availableDate":
-                            result = a1.getAvailableDate().compareTo(a2.getAvailableDate());
+                            result = safeCompare(a1.getAvailableDate(), a2.getAvailableDate());
                             break;
                         case "startTime":
-                            result = a1.getStartTime().compareTo(a2.getStartTime());
+                            result = safeCompare(a1.getStartTime(), a2.getStartTime());
                             break;
                         case "endTime":
-                            result = a1.getEndTime().compareTo(a2.getEndTime());
+                            result = safeCompare(a1.getEndTime(), a2.getEndTime());
                             break;
                         case "slotType":
-                            result = a1.getSlotType().toString().compareTo(a2.getSlotType().toString());
+                            String slotType1 = a1.getSlotType() != null ? a1.getSlotType().toString() : "";
+                            String slotType2 = a2.getSlotType() != null ? a2.getSlotType().toString() : "";
+                            result = slotType1.compareToIgnoreCase(slotType2);
                             break;
                         case "recurring":
                             result = Boolean.compare(a1.isRecurring(), a2.isRecurring());
@@ -131,15 +153,33 @@ public class DoctorAvailabilityController {
                             result = Integer.compare(a1.getTotalSlots(), a2.getTotalSlots());
                             break;
                         case "notes":
-                            result = a1.getNotes().compareTo(a2.getNotes());
+                            result = safeCompare(a1.getNotes(), a2.getNotes());
                             break;
-                        case "doctorId":
-                            result = a1.getDoctor().getDoctorId().compareTo(a2.getDoctor().getDoctorId());
+                        case "doctorName":
+                            String name1 = (a1.getDoctor() != null && a1.getDoctor().getDoctorName() != null)
+                                           ? a1.getDoctor().getDoctorName() : "";
+                            String name2 = (a2.getDoctor() != null && a2.getDoctor().getDoctorName() != null)
+                                           ? a2.getDoctor().getDoctorName() : "";
+                            result = name1.compareToIgnoreCase(name2);
+                            break;
+                        case "specialization":
+                            String spec1 = (a1.getDoctor() != null && a1.getDoctor().getSpecialization() != null)
+                                           ? a1.getDoctor().getSpecialization() : "";
+                            String spec2 = (a2.getDoctor() != null && a2.getDoctor().getSpecialization() != null)
+                                           ? a2.getDoctor().getSpecialization() : "";
+                            result = spec1.compareToIgnoreCase(spec2);
                             break;
                         default:
                             result = 0;
                     }
                     return sortAscending ? result : -result;
+                }
+
+                private <T extends Comparable<T>> int safeCompare(T o1, T o2) {
+                    if (o1 == null && o2 == null) return 0;
+                    if (o1 == null) return -1;
+                    if (o2 == null) return 1;
+                    return o1.compareTo(o2);
                 }
             });
         }
@@ -155,6 +195,11 @@ public class DoctorAvailabilityController {
 
         context.getExternalContext().getFlash().setKeepMessages(true);
 
+        // Normalize the doctor ID (trim whitespace and convert to uppercase)
+        if (doctorId != null) {
+            doctorId = doctorId.trim().toUpperCase();
+        }
+
         if (doctorId == null || doctorId.trim().isEmpty()) {
             context.addMessage("availabilityForm:doctorId", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Doctor ID is required.", null));
             isValid = false;
@@ -163,6 +208,7 @@ public class DoctorAvailabilityController {
             isValid = false;
         }
 
+        // Rest of your validation logic remains the same...
         Doctors doctor = availabilityDao.getDoctorById(doctorId);
         if (doctor == null || doctor.getProvider() == null) {
             context.addMessage("availabilityForm:doctorId", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Doctor ID is invalid or not linked to any provider.", null));
@@ -172,7 +218,7 @@ public class DoctorAvailabilityController {
         Date today = new Date();
         Date selectedDate = availability.getAvailableDate();
         if (selectedDate == null) {
-            context.addMessage("availabilityForm:date", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Enter the Available Date (yyyy-MM-dd)", null));
+            context.addMessage("availabilityForm:date", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Enter the Available Date (mm-dd-yyyy)", null));
             isValid = false;
         } else {
             Date todayNoTime = removeTime(today);
@@ -328,14 +374,12 @@ public class DoctorAvailabilityController {
     public String fetchAvailabilityByDate() {
         FacesContext context = FacesContext.getCurrentInstance();
 
-        // 1. Null check
         if (selectedDate == null) {
             context.addMessage("availabilityForm:date", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please select a date.", null));
             availabilityByDateList = null;
             return null;
         }
 
-        // 2. Past date check
         Date today = removeTime(new Date());
         Date inputDate = removeTime(selectedDate);
         if (inputDate.before(today)) {
@@ -344,44 +388,19 @@ public class DoctorAvailabilityController {
             return null;
         }
 
-        // 3. Fetch from DB
         availabilityByDateList = availabilityDao.getAvailabilityByDate(selectedDate);
+        totalRecords = (availabilityByDateList != null) ? availabilityByDateList.size() : 0;
 
-        // 4. No result found
-        if (availabilityByDateList == null || availabilityByDateList.isEmpty()) {
+        if (totalRecords == 0) {
             context.addMessage("availabilityForm:date", new FacesMessage(FacesMessage.SEVERITY_WARN, "Availability Date Does Not Exist.", null));
             availabilityByDateList = null;
             return null;
         }
 
         message = null;
-        resetPagination();
+        resetPagination(); // sets currentPage = 1
         return null;
     }
-
-
-    
-    
-//    public String fetchAvailabilityByDate() {
-//        if (selectedDate == null) {
-//            message = "Please select a date.";
-//            availabilityByDateList = null;
-//            return null;
-//        }
-//
-//        // Optimization: Skip re-fetching if same date is selected and results already exist
-//        if (availabilityByDateList != null && !availabilityByDateList.isEmpty()) {
-//            Date existingDate = availabilityByDateList.get(0).getAvailableDate();
-//            if (existingDate != null && existingDate.equals(selectedDate)) {
-//                return null; // skip re-fetch
-//            }
-//        }
-//
-//        availabilityByDateList = availabilityDao.getAvailabilityByDate(selectedDate);
-//        message = null;
-//        return null;
-//    }
-    
 
     
     // Update
@@ -398,7 +417,7 @@ public class DoctorAvailabilityController {
 
         // Date Validation
         if (selectedDate == null) {
-            context.addMessage("availabilityForm:date", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Enter the Available Date (yyyy-MM-dd)", null));
+            context.addMessage("availabilityForm:date", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Enter the Available Date", null));
             return null;
         }
         if (removeTime(selectedDate).before(removeTime(today))) {
@@ -444,11 +463,11 @@ public class DoctorAvailabilityController {
         }
 
         // Recurring Logic
-        if (SlotType.STANDARD.equals(selectedAvailability.getSlotType())) {
-            selectedAvailability.setRecurring(true);
-        } else if (SlotType.ADHOC.equals(selectedAvailability.getSlotType())) {
-            selectedAvailability.setRecurring(false);
-        }
+//        if (SlotType.STANDARD.equals(selectedAvailability.getSlotType())) {
+//            selectedAvailability.setRecurring(true);
+//        } else if (SlotType.ADHOC.equals(selectedAvailability.getSlotType())) {
+//            selectedAvailability.setRecurring(false);
+//        }
 
         // Total Slots
         Integer totalSlots = selectedAvailability.getTotalSlots();
@@ -474,7 +493,24 @@ public class DoctorAvailabilityController {
         context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Availability updated successfully.", null));
         return "listAvailabilityByDate";
     }
+    
+//    //Delete
+//    public String deleteAvailability(String availabilityId) {
+//        boolean deleted = availabilityDao.deleteAvailabilityById(availabilityId);
+//
+//        if (deleted) {
+//            FacesContext.getCurrentInstance().addMessage(null,
+//                new FacesMessage(FacesMessage.SEVERITY_INFO, "Availability deleted successfully.", null));
+//            getAvailabilityList(); // Refresh list
+//        } else {
+//            FacesContext.getCurrentInstance().addMessage(null,
+//                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Deletion failed. Availability not found.", null));
+//        }
+//
+//        return null;
+//    }
 
+    
 
     // Reset Full Form
     public String resetForm() {
@@ -559,6 +595,7 @@ public class DoctorAvailabilityController {
     // Getters and Setters
 
     
+    
     public DoctorAvailability getAvailability() {
     	if (availability.getAvailabilityId() == null && availabilityDao != null) {
     	    String newId = availabilityDao.generateAvailabilityId();
@@ -566,6 +603,30 @@ public class DoctorAvailabilityController {
     	}
         return availability;
     }
+
+	public DoctorAvailability getBackupAvailability() {
+		return backupAvailability;
+	}
+
+	public void setBackupAvailability(DoctorAvailability backupAvailability) {
+		this.backupAvailability = backupAvailability;
+	}
+
+	public String getSortColumn() {
+		return sortColumn;
+	}
+
+	public void setSortColumn(String sortColumn) {
+		this.sortColumn = sortColumn;
+	}
+
+	public boolean isSortAscending() {
+		return sortAscending;
+	}
+
+	public void setSortAscending(boolean sortAscending) {
+		this.sortAscending = sortAscending;
+	}
 
 	public void setAvailability(DoctorAvailability availability) {
         this.availability = availability;

@@ -1,24 +1,23 @@
 package com.java.jsf.provider.dao;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import com.java.jsf.provider.model.Appointment;
 import com.java.jsf.provider.model.AppointmentStatus;
 
 public interface AppointmentDao {
+	
+    List<Appointment> getAppointmentsByDoctorAndStatus(String doctorId, String status);
 
-    List<Appointment> getAllAppointments();
+    boolean markAppointmentAsBooked(String appointmentId, Timestamp bookedAt);
 
-    List<Appointment> getAppointmentsByStatus(String completed);
-
-    Appointment getAppointmentById(String appointmentId);
-
-	List<Appointment> getAppointmentsByDoctorAndStatus(String doctorId, String status);
-
-	boolean approveAppointment(String appointmentId);
-
-	boolean cancelAppointment(String appointmentId);
-
-	boolean completeAppointment(String appointmentId);
+    boolean cancelPendingAppointmentByDoctor(String appointmentId, Timestamp cancelledAt);
     
-    
+    List<Appointment> getCompletedAppointments();
+
+	Appointment getAppointmentById(String appointmentId);
+
+	List<Appointment> getAllAppointments();
+
 }

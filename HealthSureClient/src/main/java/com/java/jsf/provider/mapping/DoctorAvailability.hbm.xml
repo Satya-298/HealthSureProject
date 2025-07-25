@@ -10,7 +10,7 @@
     </id>
 
     <!-- Many-to-One to Doctors -->
-    <many-to-one name="doctor" class="com.java.jsf.provider.model.Doctors" column="doctor_id" not-null="true"/>
+    <many-to-one name="doctor" class="com.java.jsf.provider.model.Doctors" column="doctor_id" not-null="true" lazy="false"/>
 
     <property name="availableDate" column="available_date" type="date"/>
     <property name="startTime" column="start_time" type="time"/>

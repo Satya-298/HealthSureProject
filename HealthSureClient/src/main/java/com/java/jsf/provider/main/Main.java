@@ -1,43 +1,45 @@
 package com.java.jsf.provider.main;
 
-import java.util.List;
+import com.java.jsf.provider.daoImpl.MedicalHistoryDaoImpl;
+import com.java.jsf.provider.model.MedicalProcedure;
+import com.java.jsf.provider.model.ProcedureDailyLog;
 
-import com.java.jsf.provider.dao.AppointmentDao;
-import com.java.jsf.provider.daoImpl.AppointmentDaoImpl;
-import com.java.jsf.provider.model.Appointment;
+import java.util.List;
+import java.util.Set;
 
 public class Main {
-
     public static void main(String[] args) {
+        MedicalHistoryDaoImpl dao = new MedicalHistoryDaoImpl();
 
-        AppointmentDao dao = new AppointmentDaoImpl();
+        // Replace with an actual procedure ID from your DB that has logs
+        String procedureId = "PROC018";
 
-        System.out.println("----- All Appointments -----");
-        List<Appointment> all = dao.getAllAppointments();
-        for (Appointment appt : all) {
-            System.out.println(appt.getAppointmentId() + " - " + appt.getStatus());
+        // Fetch procedure with logs using DAO
+        MedicalProcedure procedure = dao.getProcedureWithLogs(procedureId);
+
+        if (procedure == null) {
+            System.out.println("❌ No procedure found with ID: " + procedureId);
+            return;
         }
 
-        System.out.println("\n----- PENDING Appointments -----");
-        List<Appointment> pending = dao.getAppointmentsByStatus("PENDING");
-        for (Appointment appt : pending) {
-            System.out.println(appt.getAppointmentId() + " - " + appt.getStatus());
+        // Print procedure details
+        System.out.println("✅ Procedure ID: " + procedure.getProcedureId());
+        System.out.println("Diagnosis: " + procedure.getDiagnosis());
+        System.out.println("Recommendations: " + procedure.getRecommendations());
+
+        // Fetch logs (check your getter name: getProcedureLogs() or getLogs())
+        Set<ProcedureDailyLog> logs = procedure.getLogs(); // <-- Make sure this method exists
+
+        if (logs == null || logs.isEmpty()) {
+            System.out.println("ℹ️ No logs found for this procedure.");
+        } else {
+            System.out.println("📋 Logs found: " + logs.size());
+            for (ProcedureDailyLog log : logs) {
+                System.out.println("---------------------------------");
+                System.out.println("🗓️ Log Date: " + log.getLogDate());
+                System.out.println("❤️ Vitals: " + log.getVitals());
+                System.out.println("📝 Notes: " + log.getNotes());
+            }
         }
-
-        System.out.println("\n----- Approving Appointment APPT106 -----");
-        boolean approved = dao.approveAppointment("APPT106");
-        System.out.println("Approved? " + approved);
-
-        System.out.println("\n----- Completing Appointment APPT108 -----");
-        boolean completed = dao.completeAppointment("APPT108");
-        System.out.println("Completed? " + completed);
-
-        System.out.println("\n----- Cancelling Appointment APPT107 -----");
-        boolean cancelled = dao.cancelAppointment("APPT107");
-        System.out.println("Cancelled? " + cancelled);
-
-//        System.out.println("\n----- Appointment by ID: APPT108 -----");
-//        Appointment appt = dao.getAppointmentById("APPT108");
-//        System.out.println(appt.getAppointmentId() + " - " + appt.getStatus());
     }
 }

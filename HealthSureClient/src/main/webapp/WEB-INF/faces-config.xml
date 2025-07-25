@@ -1,144 +1,133 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<faces-config xmlns="http://java.sun.com/xml/ns/javaee" 
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee /WEB-INF/schema/web-facesconfig_2_0.xsd" 
-              version="2.0" metadata-complete="false">
-    <!-- This file must be present with our jar, even if it is empty.  Otherwise, our Java annotations won't get scanned! -->
-    
-<!-- Doctor Availability Beans -->
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee /WEB-INF/schema/web-facesconfig_2_0.xsd"
+	version="2.0" metadata-complete="false">
+	<!-- This file must be present with our jar, even if it is empty. Otherwise, 
+		our Java annotations won't get scanned! -->
 
-<managed-bean>
-    <managed-bean-name>availabilityDao</managed-bean-name>
-    <managed-bean-class>com.java.jsf.provider.daoImpl.DoctorAvailabilityDaoImpl</managed-bean-class>
-    <managed-bean-scope>session</managed-bean-scope>
-</managed-bean>
+	<!-- Doctor Availability Beans -->
 
-<managed-bean>
-    <managed-bean-name>availability</managed-bean-name>
-    <managed-bean-class>com.java.jsf.provider.model.DoctorAvailability</managed-bean-class>
-    <managed-bean-scope>session</managed-bean-scope>
-</managed-bean>
+	<managed-bean>
+		<managed-bean-name>availabilityDao</managed-bean-name>
+		<managed-bean-class>com.java.jsf.provider.daoImpl.DoctorAvailabilityDaoImpl
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
-
-<managed-bean>
-    <managed-bean-name>availabilityController</managed-bean-name>
-    <managed-bean-class>com.java.jsf.provider.controller.DoctorAvailabilityController</managed-bean-class>
-    <managed-bean-scope>session</managed-bean-scope> 
-    
-    <managed-property>
-        <property-name>availabilityDao</property-name>
-        <property-class>com.java.jsf.provider.daoImpl.DoctorAvailabilityDaoImpl</property-class>
-        <value>#{availabilityDao}</value>
-    </managed-property>
-
-    <managed-property>
-        <property-name>availability</property-name>
-        <property-class>com.java.jsf.provider.model.DoctorAvailability</property-class>
-        <value>#{availability}</value>
-    </managed-property>
-</managed-bean>
+	<managed-bean>
+		<managed-bean-name>availability</managed-bean-name>
+		<managed-bean-class>com.java.jsf.provider.model.DoctorAvailability
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>totalSlots</property-name>
+			<value>1</value>
+		</managed-property>
+	</managed-bean>
 
 
-<!-- Medical Procedure Beans -->
+	<managed-bean>
+		<managed-bean-name>availabilityController</managed-bean-name>
+		<managed-bean-class>com.java.jsf.provider.controller.DoctorAvailabilityController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 
-<managed-bean>
-    <managed-bean-name>medicalHistoryDao</managed-bean-name>
-    <managed-bean-class>com.java.jsf.provider.daoImpl.MedicalHistoryDaoImpl</managed-bean-class>
-    <managed-bean-scope>session</managed-bean-scope>
-</managed-bean>
+		<managed-property>
+			<property-name>availabilityDao</property-name>
+			<property-class>com.java.jsf.provider.daoImpl.DoctorAvailabilityDaoImpl
+			</property-class>
+			<value>#{availabilityDao}</value>
+		</managed-property>
 
-<managed-bean>
-    <managed-bean-name>medicalProcedure</managed-bean-name>
-    <managed-bean-class>com.java.jsf.provider.model.MedicalProcedure</managed-bean-class>
-    <managed-bean-scope>session</managed-bean-scope>
-</managed-bean>
-
-<managed-bean>
-    <managed-bean-name>medicalHistoryController</managed-bean-name>
-    <managed-bean-class>com.java.jsf.provider.controller.MedicalHistoryController</managed-bean-class>
-    <managed-bean-scope>session</managed-bean-scope>
-
-    <managed-property>
-        <property-name>medicalHistoryDao</property-name>
-        <property-class>com.java.jsf.provider.daoImpl.MedicalHistoryDaoImpl</property-class>
-        <value>#{medicalHistoryDao}</value>
-    </managed-property>
-
-    <managed-property>
-        <property-name>medicalProcedure</property-name>
-        <property-class>com.java.jsf.provider.model.MedicalProcedure</property-class>
-        <value>#{medicalProcedure}</value>
-    </managed-property>
-</managed-bean>
-
-<!-- Appointment Beans -->
-
-<managed-bean>
-    <managed-bean-name>appointmentDao</managed-bean-name>
-    <managed-bean-class>com.java.jsf.provider.daoImpl.AppointmentDaoImpl</managed-bean-class>
-    <managed-bean-scope>session</managed-bean-scope>
-</managed-bean>
-
-<!-- <managed-bean>
-    <managed-bean-name>appointment</managed-bean-name>
-    <managed-bean-class>com.java.jsf.provider.model.Appointment</managed-bean-class>
-    <managed-bean-scope>session</managed-bean-scope>
-</managed-bean> -->
-
-<managed-bean>
-    <managed-bean-name>appointmentController</managed-bean-name>
-    <managed-bean-class>com.java.jsf.provider.controller.AppointmentController</managed-bean-class>
-    <managed-bean-scope>session</managed-bean-scope>
-
-    <managed-property>
-        <property-name>appointmentDao</property-name>
-        <property-class>com.java.jsf.provider.dao.AppointmentDao</property-class>
-        <value>#{appointmentDao}</value>
-    </managed-property>
-
-  <!--   <managed-property>
-        <property-name>appointment</property-name>
-        <property-class>com.java.jsf.provider.model.Appointment</property-class>
-        <value>#{appointment}</value>
-    </managed-property> -->
-</managed-bean>
+		<managed-property>
+			<property-name>availability</property-name>
+			<property-class>com.java.jsf.provider.model.DoctorAvailability
+			</property-class>
+			<value>#{availability}</value>
+		</managed-property>
+	</managed-bean>
 
 
+	<!-- Medical Procedure Beans -->
 
-<!-- 
-    EJB Model Bean
-    <managed-bean>
-        <managed-bean-name>ejbAvailability</managed-bean-name>
-        <managed-bean-class>com.java.ejb.provider.model.DoctorAvailability</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-    </managed-bean>
+	<managed-bean>
+		<managed-bean-name>medicalHistoryDao</managed-bean-name>
+		<managed-bean-class>com.java.jsf.provider.daoImpl.MedicalHistoryDaoImpl
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
-    EJB Logic Bean
-    <managed-bean>
-        <managed-bean-name>availabilityEjbImpl</managed-bean-name>
-        <managed-bean-class>com.java.ejb.provider.beans.DoctorAvailabilityEjbImpl</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-    </managed-bean>
+	<managed-bean>
+		<managed-bean-name>medicalProcedure</managed-bean-name>
+		<managed-bean-class>com.java.jsf.provider.model.MedicalProcedure
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
-    Controller Bean
-    <managed-bean>
-        <managed-bean-name>availabilityController</managed-bean-name>
-        <managed-bean-class>com.java.jsf.provider.controller.DoctorAvailabilityController</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
+	<managed-bean>
+		<managed-bean-name>medicalHistoryController</managed-bean-name>
+		<managed-bean-class>com.java.jsf.provider.controller.MedicalHistoryController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 
-        Inject EJB Model
-        <managed-property>
-            <property-name>ejbAvailability</property-name>
-            <property-class>com.java.ejb.provider.model.DoctorAvailability</property-class>
-            <value>#{ejbAvailability}</value>
-        </managed-property>
+		<managed-property>
+			<property-name>medicalHistoryDao</property-name>
+			<property-class>com.java.jsf.provider.daoImpl.MedicalHistoryDaoImpl
+			</property-class>
+			<value>#{medicalHistoryDao}</value>
+		</managed-property>
 
-        Inject EJB Logic
-        <managed-property>
-            <property-name>availabilityEjbImpl</property-name>
-            <property-class>com.java.ejb.provider.beans.DoctorAvailabilityEjbImpl</property-class>
-            <value>#{availabilityEjbImpl}</value>
-        </managed-property>
-    </managed-bean>
- -->
+		<managed-property>
+			<property-name>medicalProcedure</property-name>
+			<property-class>com.java.jsf.provider.model.MedicalProcedure
+			</property-class>
+			<value>#{medicalProcedure}</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- Appointment Beans -->
+
+	<managed-bean>
+		<managed-bean-name>appointmentDao</managed-bean-name>
+		<managed-bean-class>com.java.jsf.provider.daoImpl.AppointmentDaoImpl
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- <managed-bean> <managed-bean-name>appointment</managed-bean-name> <managed-bean-class>com.java.jsf.provider.model.Appointment</managed-bean-class> 
+		<managed-bean-scope>session</managed-bean-scope> </managed-bean> -->
+
+	<managed-bean>
+		<managed-bean-name>appointmentController</managed-bean-name>
+		<managed-bean-class>com.java.jsf.provider.controller.AppointmentController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+
+		<managed-property>
+			<property-name>appointmentDao</property-name>
+			<property-class>com.java.jsf.provider.dao.AppointmentDao
+			</property-class>
+			<value>#{appointmentDao}</value>
+		</managed-property>
+
+		<!-- <managed-property> <property-name>appointment</property-name> <property-class>com.java.jsf.provider.model.Appointment</property-class> 
+			<value>#{appointment}</value> </managed-property> -->
+	</managed-bean>
+
+
+
+	<!-- EJB Model Bean <managed-bean> <managed-bean-name>ejbAvailability</managed-bean-name> 
+		<managed-bean-class>com.java.ejb.provider.model.DoctorAvailability</managed-bean-class> 
+		<managed-bean-scope>session</managed-bean-scope> </managed-bean> EJB Logic 
+		Bean <managed-bean> <managed-bean-name>availabilityEjbImpl</managed-bean-name> 
+		<managed-bean-class>com.java.ejb.provider.beans.DoctorAvailabilityEjbImpl</managed-bean-class> 
+		<managed-bean-scope>session</managed-bean-scope> </managed-bean> Controller 
+		Bean <managed-bean> <managed-bean-name>availabilityController</managed-bean-name> 
+		<managed-bean-class>com.java.jsf.provider.controller.DoctorAvailabilityController</managed-bean-class> 
+		<managed-bean-scope>session</managed-bean-scope> Inject EJB Model <managed-property> 
+		<property-name>ejbAvailability</property-name> <property-class>com.java.ejb.provider.model.DoctorAvailability</property-class> 
+		<value>#{ejbAvailability}</value> </managed-property> Inject EJB Logic <managed-property> 
+		<property-name>availabilityEjbImpl</property-name> <property-class>com.java.ejb.provider.beans.DoctorAvailabilityEjbImpl</property-class> 
+		<value>#{availabilityEjbImpl}</value> </managed-property> </managed-bean> -->
 </faces-config>

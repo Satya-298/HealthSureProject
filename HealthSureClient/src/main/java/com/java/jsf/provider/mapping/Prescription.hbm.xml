@@ -16,7 +16,7 @@
  
     <many-to-one name="provider" class="com.java.jsf.provider.model.Providers" column="provider_id" not-null="true" fetch="join"/>
  
-    <many-to-one name="doctor" class="com.java.jsf.provider.model.Doctors" column="doctor_id" not-null="true" fetch="join"/>
+    <many-to-one name="doctor" class="com.java.jsf.provider.model.Doctors" column="doctor_id" not-null="true" fetch="join" lazy="false" />
     <set name="tests" table="prescribed_tests" cascade="all" inverse="true" lazy="false">
   		<key column="prescription_id"/>
   		<one-to-many class="com.java.jsf.provider.model.ProcedureTest"/>

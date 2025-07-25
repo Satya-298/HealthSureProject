@@ -49,6 +49,13 @@
             margin-top: 4px;
         }
 
+ 		input[type="date"], input[type="time"], input[type="number"] {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.9rem;
+            width: 100%;
+        }
         textarea {
             resize: vertical;
         }
@@ -230,6 +237,50 @@
     <div class="message">
         <h:outputText value="#{availabilityController.message}" />
     </div>
+    
+    <script>
+	document.addEventListener("DOMContentLoaded", function () {
+	    const popupBox = document.getElementById("popupBox");
+	    const popupMessage = document.getElementById("popupMessage");
+	    const spinner = document.getElementById("spinner");
+	    const hiddenMsg = document.getElementById("availabilityForm:hiddenMsg");
+	
+	    if (hiddenMsg && hiddenMsg.value && hiddenMsg.value.trim() === "Availability Added Successfully...") {
+	        popupBox.classList.remove("hidden");
+	        popupMessage.textContent = hiddenMsg.value;
+	        spinner.style.display = "none";
+
+	        // Hide popup after 3 seconds
+	        setTimeout(() => {
+	            popupBox.classList.add("hidden");
+	        }, 3000);
+	    }
+	
+	    const calendarInput = document.querySelector("#availabilityForm\\:date");
+	    if (calendarInput) {
+	        calendarInput.setAttribute("type", "date");
+	        const today = new Date().toISOString().split("T")[0];
+	        calendarInput.setAttribute("min", today);
+	    }
+	
+	    const startTime = document.querySelector("#availabilityForm\\:startTime");
+	    const endTime = document.querySelector("#availabilityForm\\:endTime");
+	    if (startTime) startTime.setAttribute("type", "time");
+	    if (endTime) endTime.setAttribute("type", "time");
+	
+	    const totalSlotsInput = document.querySelector("#availabilityForm\\:totalSlots");
+	    if (totalSlotsInput) {
+	        totalSlotsInput.setAttribute("type", "number");
+	        totalSlotsInput.setAttribute("maxlength", "3");
+	        totalSlotsInput.addEventListener("input", function () {
+	            if (this.value.length > 3) {
+	                this.value = this.value.slice(0, 3);
+	            }
+	        });
+	    }
+	});
+	</script>
+    
 
 </h:form>
 </f:view>

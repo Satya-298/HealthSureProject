@@ -43,7 +43,7 @@
         <property name="passwordUpdatedAt" column="password_updated_at" type="timestamp"/>
 
         <!-- One-to-many with Appointment -->
-        <set name="appointment" cascade="all" inverse="true" lazy="true">
+        <set name="appointment" cascade="all" inverse="true" lazy="false">
             <key column="h_id"/>
             <one-to-many class="com.java.jsf.provider.model.Appointment"/>
         </set>

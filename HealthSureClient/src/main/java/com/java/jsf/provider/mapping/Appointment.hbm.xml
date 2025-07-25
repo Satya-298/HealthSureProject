@@ -11,10 +11,10 @@
       <generator class="assigned"/>
     </id>
 
-    <many-to-one name="doctor" class="com.java.jsf.provider.model.Doctors" column="doctor_id" not-null="true"/>
-    <many-to-one name="recipient" class="com.java.jsf.recipient.model.Recipient" column="h_id" not-null="true"/>
-    <many-to-one name="availability" class="com.java.jsf.provider.model.DoctorAvailability" column="availability_id" not-null="true"/>
-    <many-to-one name="provider" class="com.java.jsf.provider.model.Providers" column="provider_id" not-null="true"/>
+    <many-to-one name="doctor" class="com.java.jsf.provider.model.Doctors" column="doctor_id" not-null="true" lazy="false"/>
+    <many-to-one name="recipient" class="com.java.jsf.recipient.model.Recipient" column="h_id" not-null="true" lazy="false"/>
+    <many-to-one name="availability" class="com.java.jsf.provider.model.DoctorAvailability" column="availability_id" not-null="true" lazy="false"/>
+    <many-to-one name="provider" class="com.java.jsf.provider.model.Providers" column="provider_id" not-null="true" lazy="false"/>
 
     <property name="requestedAt" column="requested_at" type="timestamp"/>
     <property name="bookedAt" column="booked_at" type="timestamp"/>

@@ -15,6 +15,16 @@
     <param-name>javax.faces.CONFIG_FILES</param-name>
     <param-value>/WEB-INF/faces-config.xml</param-value>
   </context-param>
+  
+  <context-param>
+    <param-name>providerEmail</param-name>
+    <param-value>infinitehealthsure@gmail.com</param-value>
+</context-param>
+<context-param>
+    <param-name>contactNumber</param-name>
+    <param-value>+1 (123) 456-7890</param-value>
+</context-param>
+
   <servlet>
     <servlet-name>Faces Servlet</servlet-name>
     <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
