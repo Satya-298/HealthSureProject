@@ -90,7 +90,8 @@
 <body>
 <f:view>
     <h:form id="prescriptionForm" styleClass="container">
-
+    
+    <h:messages globalOnly="true" style="color:red; margin:10px 0;" layout="list" />
 
         <!-- Title -->
         <div class="heading">

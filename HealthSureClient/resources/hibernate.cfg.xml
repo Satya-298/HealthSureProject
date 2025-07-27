@@ -23,17 +23,17 @@
         <property name="hibernate.validator.autoregister_listeners">false</property>
         
         
-    	<mapping resource="com/java/jsf/provider/mapping/Providers.hbm.xml"/>
-    	<mapping resource="com/java/jsf/provider/mapping/Doctors.hbm.xml"/>
-    	<mapping resource="com/java/jsf/provider/mapping/DoctorAvailability.hbm.xml"/>
-    	<mapping resource="com/java/jsf/recipient/mapping/Recipient.hbm.xml"/>
-    	<mapping resource="com/java/jsf/provider/mapping/Appointment.hbm.xml"/>
-    	<mapping resource="com/java/jsf/provider/mapping/MedicalProcedure.hbm.xml"/>
+    	<mapping resource="com/infinite/jsf/provider/mapping/Providers.hbm.xml"/>
+    	<mapping resource="com/infinite/jsf/provider/mapping/Doctors.hbm.xml"/>
+    	<mapping resource="com/infinite/jsf/provider/mapping/DoctorAvailability.hbm.xml"/>
+    	<mapping resource="com/infinite/jsf/recipient/mapping/Recipient.hbm.xml"/>
+    	<mapping resource="com/infinite/jsf/provider/mapping/Appointment.hbm.xml"/>
+    	<mapping resource="com/infinite/jsf/provider/mapping/MedicalProcedure.hbm.xml"/>
     	
-    	<mapping resource="com/java/jsf/provider/mapping/Prescription.hbm.xml"/>
-    	<mapping resource="com/java/jsf/provider/mapping/PrescribedMedicines.hbm.xml"/>
-    	<mapping resource="com/java/jsf/provider/mapping/ProcedureTest.hbm.xml"/>
-    	<mapping resource="com/java/jsf/provider/mapping/ProcedureDailyLog.hbm.xml"/>
+    	<mapping resource="com/infinite/jsf/provider/mapping/Prescription.hbm.xml"/>
+    	<mapping resource="com/infinite/jsf/provider/mapping/PrescribedMedicines.hbm.xml"/>
+    	<mapping resource="com/infinite/jsf/provider/mapping/ProcedureTest.hbm.xml"/>
+    	<mapping resource="com/infinite/jsf/provider/mapping/ProcedureDailyLog.hbm.xml"/>
     	
     </session-factory>
 </hibernate-configuration>

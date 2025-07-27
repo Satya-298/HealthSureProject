@@ -1,0 +1,63 @@
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.infinite.jsf.recipient.model">
+
+    <class name="Recipient" table="Recipient">
+
+        <id name="hId" column="h_id" type="string">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="firstName" column="first_name"/>
+        <property name="lastName" column="last_name"/>
+        <property name="mobile"/>
+        <property name="userName" column="user_name"/>
+
+        <property name="gender">
+            <column name="gender"/>
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">com.infinite.jsf.recipient.model.Gender</param>
+                <param name="type">12</param>
+            </type>
+        </property>
+
+        <property name="dob" type="date"/>
+        <property name="address"/>
+        <property name="createdAt" column="created_at" type="timestamp"/>
+        <property name="password"/>
+        <property name="email"/>
+
+        <property name="status">
+            <column name="status"/>
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">com.infinite.jsf.recipient.model.RecipientStatus</param>
+                <param name="type">12</param>
+            </type>
+        </property>
+
+        <property name="loginAttempts" column="login_attempts"/>
+        <property name="lockedUntil" column="locked_until" type="timestamp"/>
+        <property name="lastLogin" column="last_login" type="timestamp"/>
+        <property name="passwordUpdatedAt" column="password_updated_at" type="timestamp"/>
+
+        <!-- One-to-many with Appointment -->
+        <set name="appointment" cascade="all" inverse="true" lazy="false">
+            <key column="h_id"/>
+            <one-to-many class="com.infinite.jsf.provider.model.Appointment"/>
+        </set>
+        
+        <set name="medicalProcedure" cascade="all" inverse="true" lazy="true">
+  			<key column="h_id"/>
+  			<one-to-many class="com.infinite.jsf.provider.model.MedicalProcedure"/>
+		</set>
+
+		<set name="prescriptions" table="prescription" inverse="true" lazy="true" cascade="all">
+    		<key column="h_id"/>
+    		<one-to-many class="com.infinite.jsf.provider.model.Prescription"/>
+		</set>	
+
+
+    </class>
+</hibernate-mapping>

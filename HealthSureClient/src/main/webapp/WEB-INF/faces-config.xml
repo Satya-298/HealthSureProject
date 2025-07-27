@@ -10,14 +10,14 @@
 
 	<managed-bean>
 		<managed-bean-name>availabilityDao</managed-bean-name>
-		<managed-bean-class>com.java.jsf.provider.daoImpl.DoctorAvailabilityDaoImpl
+		<managed-bean-class>com.infinite.jsf.provider.daoImpl.DoctorAvailabilityDaoImpl
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>availability</managed-bean-name>
-		<managed-bean-class>com.java.jsf.provider.model.DoctorAvailability
+		<managed-bean-class>com.infinite.jsf.provider.model.DoctorAvailability
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -29,20 +29,20 @@
 
 	<managed-bean>
 		<managed-bean-name>availabilityController</managed-bean-name>
-		<managed-bean-class>com.java.jsf.provider.controller.DoctorAvailabilityController
+		<managed-bean-class>com.infinite.jsf.provider.controller.DoctorAvailabilityController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 
 		<managed-property>
 			<property-name>availabilityDao</property-name>
-			<property-class>com.java.jsf.provider.daoImpl.DoctorAvailabilityDaoImpl
+			<property-class>com.infinite.jsf.provider.daoImpl.DoctorAvailabilityDaoImpl
 			</property-class>
 			<value>#{availabilityDao}</value>
 		</managed-property>
 
 		<managed-property>
 			<property-name>availability</property-name>
-			<property-class>com.java.jsf.provider.model.DoctorAvailability
+			<property-class>com.infinite.jsf.provider.model.DoctorAvailability
 			</property-class>
 			<value>#{availability}</value>
 		</managed-property>
@@ -53,34 +53,34 @@
 
 	<managed-bean>
 		<managed-bean-name>medicalHistoryDao</managed-bean-name>
-		<managed-bean-class>com.java.jsf.provider.daoImpl.MedicalHistoryDaoImpl
+		<managed-bean-class>com.infinite.jsf.provider.daoImpl.MedicalHistoryDaoImpl
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>medicalProcedure</managed-bean-name>
-		<managed-bean-class>com.java.jsf.provider.model.MedicalProcedure
+		<managed-bean-class>com.infinite.jsf.provider.model.MedicalProcedure
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>medicalHistoryController</managed-bean-name>
-		<managed-bean-class>com.java.jsf.provider.controller.MedicalHistoryController
+		<managed-bean-class>com.infinite.jsf.provider.controller.MedicalHistoryController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 
 		<managed-property>
 			<property-name>medicalHistoryDao</property-name>
-			<property-class>com.java.jsf.provider.daoImpl.MedicalHistoryDaoImpl
+			<property-class>com.infinite.jsf.provider.daoImpl.MedicalHistoryDaoImpl
 			</property-class>
 			<value>#{medicalHistoryDao}</value>
 		</managed-property>
 
 		<managed-property>
 			<property-name>medicalProcedure</property-name>
-			<property-class>com.java.jsf.provider.model.MedicalProcedure
+			<property-class>com.infinite.jsf.provider.model.MedicalProcedure
 			</property-class>
 			<value>#{medicalProcedure}</value>
 		</managed-property>
@@ -90,7 +90,7 @@
 
 	<managed-bean>
 		<managed-bean-name>appointmentDao</managed-bean-name>
-		<managed-bean-class>com.java.jsf.provider.daoImpl.AppointmentDaoImpl
+		<managed-bean-class>com.infinite.jsf.provider.daoImpl.AppointmentDaoImpl
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -100,34 +100,34 @@
 
 	<managed-bean>
 		<managed-bean-name>appointmentController</managed-bean-name>
-		<managed-bean-class>com.java.jsf.provider.controller.AppointmentController
+		<managed-bean-class>com.infinite.jsf.provider.controller.AppointmentController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 
 		<managed-property>
 			<property-name>appointmentDao</property-name>
-			<property-class>com.java.jsf.provider.dao.AppointmentDao
+			<property-class>com.infinite.jsf.provider.dao.AppointmentDao
 			</property-class>
 			<value>#{appointmentDao}</value>
 		</managed-property>
 
-		<!-- <managed-property> <property-name>appointment</property-name> <property-class>com.java.jsf.provider.model.Appointment</property-class> 
+		<!-- <managed-property> <property-name>appointment</property-name> <property-class>com.infinite.jsf.provider.model.Appointment</property-class> 
 			<value>#{appointment}</value> </managed-property> -->
 	</managed-bean>
 
 
 
 	<!-- EJB Model Bean <managed-bean> <managed-bean-name>ejbAvailability</managed-bean-name> 
-		<managed-bean-class>com.java.ejb.provider.model.DoctorAvailability</managed-bean-class> 
+		<managed-bean-class>com.infinite.ejb.provider.model.DoctorAvailability</managed-bean-class> 
 		<managed-bean-scope>session</managed-bean-scope> </managed-bean> EJB Logic 
 		Bean <managed-bean> <managed-bean-name>availabilityEjbImpl</managed-bean-name> 
-		<managed-bean-class>com.java.ejb.provider.beans.DoctorAvailabilityEjbImpl</managed-bean-class> 
+		<managed-bean-class>com.infinite.ejb.provider.beans.DoctorAvailabilityEjbImpl</managed-bean-class> 
 		<managed-bean-scope>session</managed-bean-scope> </managed-bean> Controller 
 		Bean <managed-bean> <managed-bean-name>availabilityController</managed-bean-name> 
-		<managed-bean-class>com.java.jsf.provider.controller.DoctorAvailabilityController</managed-bean-class> 
+		<managed-bean-class>com.infinite.jsf.provider.controller.DoctorAvailabilityController</managed-bean-class> 
 		<managed-bean-scope>session</managed-bean-scope> Inject EJB Model <managed-property> 
-		<property-name>ejbAvailability</property-name> <property-class>com.java.ejb.provider.model.DoctorAvailability</property-class> 
+		<property-name>ejbAvailability</property-name> <property-class>com.infinite.ejb.provider.model.DoctorAvailability</property-class> 
 		<value>#{ejbAvailability}</value> </managed-property> Inject EJB Logic <managed-property> 
-		<property-name>availabilityEjbImpl</property-name> <property-class>com.java.ejb.provider.beans.DoctorAvailabilityEjbImpl</property-class> 
+		<property-name>availabilityEjbImpl</property-name> <property-class>com.infinite.ejb.provider.beans.DoctorAvailabilityEjbImpl</property-class> 
 		<value>#{availabilityEjbImpl}</value> </managed-property> </managed-bean> -->
 </faces-config>

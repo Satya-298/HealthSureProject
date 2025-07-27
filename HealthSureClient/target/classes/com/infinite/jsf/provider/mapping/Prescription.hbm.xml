@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+  "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+  "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+ 
+<hibernate-mapping>
+  <class name="com.infinite.jsf.provider.model.Prescription" table="prescription">
+    <id name="prescriptionId" column="prescription_id" type="string">
+      <generator class="assigned"/>
+    </id>
+ 
+    <!-- Many-to-One Relationships -->
+    <many-to-one name="medicalProcedure" class="com.infinite.jsf.provider.model.MedicalProcedure" column="procedure_id" not-null="true" fetch="join"/>
+ 
+    <many-to-one name="recipient" class="com.infinite.jsf.recipient.model.Recipient" column="h_id" not-null="true" fetch="join"/>
+ 
+    <many-to-one name="provider" class="com.infinite.jsf.provider.model.Providers" column="provider_id" not-null="true" fetch="join"/>
+ 
+    <many-to-one name="doctor" class="com.infinite.jsf.provider.model.Doctors" column="doctor_id" not-null="true" fetch="join" lazy="false" />
+    <set name="tests" table="prescribed_tests" cascade="all" inverse="true" lazy="false">
+  		<key column="prescription_id"/>
+  		<one-to-many class="com.infinite.jsf.provider.model.ProcedureTest"/>
+	</set>
+	
+	<set name="prescribedMedicines" table="prescribed_medicines" cascade="all" lazy="false" inverse="true">
+  		<key column="prescription_id" not-null="true"/>
+  		<one-to-many class="com.infinite.jsf.provider.model.PrescribedMedicines"/>
+	</set>
+
+	
+    <!-- Timestamps -->
+    <property name="writtenOn" column="written_on" type="timestamp" not-null="true"/>
+    <property name="createdAt" column="created_at" type="timestamp" not-null="true"/>
+     <property name="startDate" column="start_date" type="timestamp" not-null="true"/>
+      <property name="endDate" column="end_date" type="timestamp" not-null="true"/>
+  </class>
+</hibernate-mapping>

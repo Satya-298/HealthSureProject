@@ -19,7 +19,15 @@
 <f:view>
     <h:form id="logForm">
         <h2>Procedure Daily Log</h2>
-
+        
+        <!-- Back Button -->
+        <div style="margin-bottom: 20px;">
+            <h:commandButton value="Back to Prescriptions"
+                             action="#{medicalHistoryController.backToMedicalProcedure}"
+                             styleClass="btn"
+                             immediate="true" />
+        </div>
+        
         <h:panelGrid columns="2" cellpadding="5">
             <h:outputText value="Procedure ID:" />
             <h:outputText value="#{medicalHistoryController.medicalProcedure.procedureId}" />
